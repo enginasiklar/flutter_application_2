@@ -5,16 +5,19 @@ import 'package:flutter_application_2/constants.dart';
 import 'package:flutter_application_2/model/user_model.dart';
 
 class ApiService {
-  Future<List<UserModel>?> getUsers() async {
-    try {
-      var url = Uri.parse(ApiConstants.baseUrl + ApiConstants.usersEndpoint);
-      var response = await http.get(url);
-      if (response.statusCode == 200) {
-        List<UserModel> _model = userModelFromJson(response.body);
-        return _model;
-      }
-    } catch (e) {
-      log(e.toString());
+  Future<List<UserModel>> getUsers() async {
+    final response = await http
+        .get(Uri.parse(ApiConstants.baseUrl + ApiConstants.usersEndpoint));
+
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      List<UserModel> _model = userModelFromJson(response.body);
+      return _model;
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to load album');
     }
   }
 }
