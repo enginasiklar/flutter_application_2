@@ -25,7 +25,7 @@ List<PricePoint> get pricePoints {
   ];
   print(list_copy);
   for (int i = 0; i < list_copy!.length; i++) {
-    double a = double.parse(list_copy![i].close.toString());
+    double a = double.parse(list_copy![i].value.toString());
     data.add(a);
   }
   return data
