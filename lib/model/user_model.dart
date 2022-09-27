@@ -9,19 +9,19 @@ String userModelToJson(List<UserModel> data) =>
 
 class UserModel {
   UserModel({
-    required this.date,
-    required this.close,
+    required this.name,
+    required this.value,
   });
 
   String name;
   double value;
   factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
-        date: json["date"],
-        close: json["close"],
+        name: json["name"],
+        value: json["value"],
       );
 
   Map<String, dynamic> toJson() => {
-        "name": date,
-        "value": close,
+        "name": name,
+        "value": value,
       };
 }

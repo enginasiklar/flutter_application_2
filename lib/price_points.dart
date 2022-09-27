@@ -10,10 +10,12 @@ class PricePoint {
 }
 
 Future<List<PricePoint>> getPricePoints() async {
-  final data = <double>[2,];
+  final data = <double>[
+    2,
+  ];
   List<UserModel> numbers = await ApiService().getUsers();
   for (int i = 0; i < numbers.length; i++) {
-    double a = double.parse(numbers[i].value);
+    double a = double.parse(numbers[i].value.toString());
     data.add(a);
   }
   return data
