@@ -29,7 +29,7 @@ List<PricePoint> get pricePoints {
     data.add(a);
   }
   return data
-      .mapIndexed(
-          (index, element) => PricePoint(x: index.toDouble(), y: element))
+      .mapIndexed((index, element) =>
+          PricePoint(x: index.toDouble(), y: element.toDouble()))
       .toList();
 }
