@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ffi';
 
 List<UserModel> userModelFromJson(String str) =>
     List<UserModel>.from(json.decode(str).map((x) => UserModel.fromJson(x)));
@@ -12,9 +13,8 @@ class UserModel {
     required this.value,
   });
 
-
   String name;
-  String value;
+  double value;
   factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
         name: json["name"],
         value: json["value"],
@@ -25,4 +25,3 @@ class UserModel {
         "value": value,
       };
 }
-

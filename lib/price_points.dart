@@ -7,10 +7,9 @@ List<UserModel>? list_copy;
 
 void convertFutureListToList() async {
   Future<List<UserModel>?> _userModel = (ApiService().getUsers());
-  List<UserModel>? list = await _userModel ;
+  List<UserModel>? list = await _userModel;
   list_copy = list;
 }
-
 
 class PricePoint {
   final double x;
@@ -25,8 +24,8 @@ List<PricePoint> get pricePoints {
     2,
   ];
   print(list_copy);
-  for(int i=0;i<list_copy!.length;i++){
-    double a = double.parse(list_copy![i].value);
+  for (int i = 0; i < list_copy!.length; i++) {
+    double a = double.parse(list_copy![i].value.toString());
     data.add(a);
   }
   return data
