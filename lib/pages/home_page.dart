@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_2/charts/bar_chart.dart';
 import 'package:flutter_application_2/pages/bar_chart_page.dart';
+import 'package:flutter_application_2/pages/gauge_range_page.dart';
 import 'package:flutter_application_2/pages/line_chart_page.dart';
 
 class HomePage extends StatelessWidget {
@@ -9,7 +9,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: Scaffold(
         appBar: AppBar(
           toolbarHeight: 0,
@@ -20,12 +20,16 @@ class HomePage extends StatelessWidget {
             Tab(
               icon: Icon(Icons.bar_chart),
             ),
+            Tab(
+              icon: Icon(Icons.bar_chart),
+            ),
           ]),
         ),
         backgroundColor: Colors.amber[40],
         body: const TabBarView(children: [
           LineChartPage(),
           BarChartPage(),
+          GaugeRangePage(),
         ]),
       ),
     );

@@ -12,8 +12,8 @@ class ApiService {
     if (response.statusCode == 200) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
-      List<UserModel> _model = userModelFromJson(response.body);
-      return _model;
+      List<UserModel> model = userModelFromJson(response.body);
+      return model;
     } else {
       // If the server did not return a 200 OK response,
       // then throw an exception.

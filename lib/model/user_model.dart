@@ -16,12 +16,12 @@ class UserModel {
   String name;
   double value;
   factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
-        name: json["name"],
-        value: json["value"],
-      );
+    name: json["name"],
+    value: json["value"],
+  );
 
   Map<String, dynamic> toJson() => {
-        "name": name,
-        "value": value,
-      };
+    "name": name,
+    "value": value,
+  };
 }
