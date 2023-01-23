@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_2/pages/bar_chart_page.dart';
 import 'package:flutter_application_2/pages/gauge_range_page.dart';
 import 'package:flutter_application_2/pages/line_chart_page.dart';
+import 'package:flutter_application_2/pages/predict_line_chart_page.dart';
+import 'package:flutter_application_2/pages/stock_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -9,7 +11,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
+      length: 5,
       child: Scaffold(
         appBar: AppBar(
           toolbarHeight: 0,
@@ -23,13 +25,21 @@ class HomePage extends StatelessWidget {
             Tab(
               icon: Icon(Icons.bar_chart),
             ),
+            Tab(
+              icon: Icon(Icons.bar_chart),
+            ),
+            Tab(
+              icon: Icon(Icons.bar_chart),
+            ),
           ]),
         ),
         backgroundColor: Colors.amber[40],
-        body: const TabBarView(children: [
-          LineChartPage(),
-          BarChartPage(),
+        body: TabBarView(children: [
+          const LineChartPage(),
+          const BarChartPage(),
           GaugeRangePage(),
+          const PredictLineDataPage(),
+          const stockPage(),
         ]),
       ),
     );
