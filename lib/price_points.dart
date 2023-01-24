@@ -13,7 +13,16 @@ Future<List<PricePoint>> getPricePoints() async {
   final data = <double>[
     2,
   ];
-  List<UserModel> numbers = await ApiService().getUsers();
+  List<UserModel> numbers;
+  try {
+    numbers = await ApiService().getUsers();
+  } catch (e) {
+    return [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+        .mapIndexed(
+            (index, element) => PricePoint(x: index.toDouble(), y: element))
+        .toList();
+  }
+
   for (int i = 0; i < numbers.length; i++) {
     double a = double.parse(numbers[i].value.toString());
     data.add(a);
