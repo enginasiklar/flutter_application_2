@@ -53,9 +53,12 @@ class _RootPageState extends State<RootPage> {
       ),
       body: pages[currentPage],
       bottomNavigationBar: NavigationBar(
+        labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
         destinations: const [
-          NavigationDestination(icon: Icon(Icons.home), label: 'home'),
-          NavigationDestination(icon: Icon(Icons.person), label: 'profile'),
+          NavigationDestination(
+              icon: Icon(Icons.home), label: 'home', tooltip: 'home'),
+          NavigationDestination(
+              icon: Icon(Icons.person), label: 'profile', tooltip: 'profile'),
           //NavigationDestination(icon: Icon(Icons.call), label: 'call')
         ],
         onDestinationSelected: (int index) {

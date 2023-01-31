@@ -9,9 +9,10 @@ class GaugeRangePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        body: Center(
+    return Scaffold(
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(15.0),
           child: FutureBuilder<Sentiment>(
             future: futureAlbum,
             builder: (context, snapshot) {
@@ -21,7 +22,7 @@ class GaugeRangePage extends StatelessWidget {
                 return Text('${snapshot.error}');
               }
               // By default, show a loading spinner.
-              return const CircularProgressIndicator();
+              return const Center(child: CircularProgressIndicator());
             },
           ),
         ),
