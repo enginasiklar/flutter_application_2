@@ -18,7 +18,7 @@ class GaugeRangeWidget extends StatelessWidget {
           GaugeRange(startValue: 33, endValue: 66, color: Colors.orange),
           GaugeRange(startValue: 66, endValue: 100, color: Colors.green)
         ], pointers: <GaugePointer>[NeedlePointer(value:  double.parse(points.value))
-        ], annotations: <GaugeAnnotation>[GaugeAnnotation(widget: Text("${points.value} ${points.valueClassification}", style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+        ], annotations: <GaugeAnnotation>[GaugeAnnotation(widget: Text("${points.value} ${points.valueClassification}", style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
               angle: 90,
               positionFactor: 0.5)
         ])

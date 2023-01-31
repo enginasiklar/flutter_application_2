@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter_application_2/charts/line_chart.dart';
 import 'package:flutter_application_2/model/gauge_model.dart';
 import 'package:flutter_application_2/model/line_model.dart';
 import 'package:http/http.dart' as http;
@@ -60,18 +59,16 @@ class ApiService {
   }
 
   Future<List<StockData>> fetchStockData(String stockCode) async {
-    if (stockCode == 'PRDC') {
-      return getChartData();
-    }
     final response = await http.get(
-      Uri.parse(ApiConstants.candleUrl),
+      Uri.parse("${ApiConstants.candleUrl}/$stockCode"),
       headers: {
         'Authorization': 'Basic ${base64Encode(utf8.encode('uysm:pecnet'))}',
       },
     );
     if (response.statusCode == 200) {
       // If the call to the API was successful, parse the JSON
-      var data = jsonDecode(response.body);
+      String modifiedJsonString = response.body.replaceAll("NaN", "0.0");
+      var data = jsonDecode(modifiedJsonString);
       var predictionset = data["predictionset"];
       List<StockData> stockDataList = [];
       for (var i in predictionset) {

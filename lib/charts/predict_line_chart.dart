@@ -32,7 +32,7 @@ Widget build(BuildContext context) {
       ),
     );
   }
-  return Container(
+  return SizedBox(
     height: 300,
     child: SfCartesianChart(
       zoomPanBehavior: _zoomPanBehavior,
