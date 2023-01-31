@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/pages/home_page.dart';
-import 'package:flutter_application_2/pages/profile_page.dart';
 import 'package:flutter_application_2/pages/profile_page_test.dart';
+import 'package:flutter_application_2/pages/search/search_view.dart';
 
 void main() {
   runApp(const MyApp());
@@ -20,7 +20,6 @@ class MyApp extends StatelessWidget {
       ),
       home: const RootPage(title: 'XFlutter Demo main title'),
     );
-
   }
 }
 
@@ -39,6 +38,18 @@ class _RootPageState extends State<RootPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+        actions: [
+          IconButton(
+              tooltip: "search",
+              onPressed: () {
+                Navigator.of(context)
+                    .push(MaterialPageRoute(builder: (BuildContext context) {
+                  // return const stockPage();
+                  return const SearchViewPage();
+                }));
+              },
+              icon: const Icon(Icons.search))
+        ],
       ),
       body: pages[currentPage],
       bottomNavigationBar: NavigationBar(

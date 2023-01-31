@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/pages/gauge_range_page.dart';
 import 'package:flutter_application_2/pages/predict_line_chart_page.dart';
-import 'package:flutter_application_2/pages/stock_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -9,19 +8,16 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
+      length: 2,
       child: Scaffold(
         appBar: AppBar(
           toolbarHeight: 0,
           bottom: const TabBar(tabs: [
             Tab(
-              icon: Icon(Icons.bar_chart),
+              icon: Icon(Icons.multiline_chart_rounded),
             ),
             Tab(
-              icon: Icon(Icons.bar_chart),
-            ),
-            Tab(
-              icon: Icon(Icons.bar_chart),
+              icon: Icon(Icons.stacked_line_chart_rounded),
             ),
           ]),
         ),
@@ -29,7 +25,6 @@ class HomePage extends StatelessWidget {
         body: TabBarView(children: [
           GaugeRangePage(),
           const PredictLineDataPage(),
-          stockPage(),
         ]),
       ),
     );
