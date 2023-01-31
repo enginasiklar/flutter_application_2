@@ -26,14 +26,12 @@ class ApiService {
   }
 
   Future<Sentiment> getSentiment() async {
-    final response = await http
-        .get(Uri.parse(ApiConstants.gaugeUrl));
+    final response = await http.get(Uri.parse(ApiConstants.gaugeUrl));
 
     if (response.statusCode == 200) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
       return Sentiment.fromJson(jsonDecode(response.body));
-
     } else {
       // If the server did not return a 200 OK response,
       // then throw an exception.
@@ -42,13 +40,12 @@ class ApiService {
   }
 
   Future<List<LineData>> getLineData() async {
-    final response = await http
-        .get(Uri.parse(ApiConstants.lineChartUrl));
+    final response = await http.get(Uri.parse(ApiConstants.lineChartUrl));
 
     if (response.statusCode == 200) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
-      List<LineData> model = LineDataFromJson(response.body);
+      List<LineData> model = lineDataFromJson(response.body);
 
       return model;
     } else {
@@ -80,6 +77,4 @@ class ApiService {
       throw Exception('Failed to load stock data');
     }
   }
-  }
-
-
+}
