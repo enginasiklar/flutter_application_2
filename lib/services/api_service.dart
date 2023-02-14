@@ -77,4 +77,31 @@ class ApiService {
       throw Exception('Failed to load stock data');
     }
   }
+  Future<List<StockData>> fetchStockDataTimed(String stockCode, DateTime startDate, DateTime endDate) async {
+    String start = "${startDate.year}-${startDate.month.toString().padLeft(2, '0')}-${startDate.day.toString().padLeft(2, '0')}";
+    String end = "${endDate.year}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')}";
+    final response = await http.get(
+      Uri.parse("${ApiConstants.candleUrl}/$stockCode/start=$start&end=$end"),
+      headers: {
+        'Authorization': 'Basic ${base64Encode(utf8.encode('uysm:pecnet'))}',
+      },
+    );
+    if (response.statusCode == 200) {
+      // If the call to the API was successful, parse the JSON
+      String modifiedJsonString = response.body.replaceAll("NaN", "0.0");
+      var data = jsonDecode(modifiedJsonString);
+      var predictionset = data["predictionset"];
+      List<StockData> stockDataList = [];
+      for (var i in predictionset) {
+        stockDataList.add(StockData.fromJson(i));
+      }
+      return stockDataList;
+    } else {
+      // If that call was not successful, throw an error.
+      throw Exception('Failed to load stock data');
+    }
+  }
+
+
+
 }
