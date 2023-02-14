@@ -55,7 +55,41 @@ class ApiService {
     }
   }
 
-  Future<List<StockData>> fetchStockData(String stockCode) async {
+  Future<List<StockData>> fetchStockData(
+      String stockCode, int? dayWeekMonth) async {
+    /**the dayWeekMonth has values
+         *  null => retrun data as sent from the api
+         *  0    => retrun daily data
+         *  1    => retrun weekly data
+         *  2    => retrun monthly data
+         * for now null and 0 have the same effect
+         */
+    //TODO : remove this dummy-data part
+    if (stockCode == 'TESTf') {
+      List<StockData> stockDataList = [];
+      double myConstAux;
+      if (dayWeekMonth == null || dayWeekMonth == 0) {
+        myConstAux = 0;
+      } else if (dayWeekMonth == 1) {
+        myConstAux = 7;
+      } else {
+        myConstAux = 3;
+      }
+      for (var i = 0; i < 15; i++) {
+        double open = 10 + i * 5 + myConstAux;
+        double close = 8 + i * 3;
+        double low = 5 + i * 4;
+        double high = 12 + i * 6;
+        stockDataList.add(StockData(
+            date: DateTime.fromMicrosecondsSinceEpoch(1 + i * 2850000000000),
+            openingPrice: open,
+            closingPrice: close,
+            lowPrice: low,
+            highPrice: high));
+      }
+      return stockDataList;
+    }
+    //TODO: implement a func to get daily,weekly and monthly from the data fetched from the API
     final response = await http.get(
       Uri.parse("${ApiConstants.candleUrl}/$stockCode"),
       headers: {

@@ -19,6 +19,7 @@ class _SearchViewPageState extends State<SearchViewPage> {
     Stock('EBAY', 'Ebay Inc.'),
     Stock('ADBE', 'Adobe Inc.'),
     Stock('TSLA', 'Tesla Inc.'),
+    Stock('TESTf', 'Test Flutter Chart Inc.'),
   ];
   List<Stock> _auxStockList = [];
   @override
