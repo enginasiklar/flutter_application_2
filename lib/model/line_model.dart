@@ -19,12 +19,15 @@ class LineData {
     if (json.containsKey('date')) {
       date = json['date'];
     }
-    if (json.containsKey('close')) {
-      close = json['close'];
-    }
     if (json.containsKey('prediction')) {
       prediction = json['prediction'];
     }
+    if (json.containsKey('close')) {
+      close = json['close'];
+    } else {
+      close = prediction;
+    }
+
     return LineData(
       date: date,
       close: close,
