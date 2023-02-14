@@ -54,7 +54,7 @@ class _StockPageState extends State<StockPage> {
                         DateTime? pickedDate = await showDatePicker(
                             context: context,
                             initialDate: DateTime.now(),
-                            firstDate: DateTime(1950),
+                            firstDate: DateTime(2000),
                             //DateTime.now() - not to allow to choose before today.
                             lastDate: DateTime.now());
                         if (pickedDate == null) return;
@@ -76,7 +76,7 @@ class _StockPageState extends State<StockPage> {
                         DateTime? pickedDate = await showDatePicker(
                             context: context,
                             initialDate: DateTime.now(),
-                            firstDate: DateTime(1950),
+                            firstDate: DateTime(2000),
                             //DateTime.now() - not to allow to choose before today.
                             lastDate: DateTime.now());
                         if (pickedDate == null) return;
