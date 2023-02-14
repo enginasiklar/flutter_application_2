@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_2/charts/bar_chart.dart';
-import 'package:flutter_application_2/pages/bar_chart_page.dart';
-import 'package:flutter_application_2/pages/line_chart_page.dart';
+import 'package:flutter_application_2/pages/gauge_range_page.dart';
+import 'package:flutter_application_2/pages/predict_line_chart_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -15,17 +14,17 @@ class HomePage extends StatelessWidget {
           toolbarHeight: 0,
           bottom: const TabBar(tabs: [
             Tab(
-              icon: Icon(Icons.stacked_line_chart),
+              icon: Icon(Icons.multiline_chart_rounded),
             ),
             Tab(
-              icon: Icon(Icons.bar_chart),
+              icon: Icon(Icons.stacked_line_chart_rounded),
             ),
           ]),
         ),
         backgroundColor: Colors.amber[40],
-        body: const TabBarView(children: [
-          LineChartPage(),
-          BarChartPage(),
+        body: TabBarView(children: [
+          GaugeRangePage(),
+          const PredictLineDataPage(),
         ]),
       ),
     );

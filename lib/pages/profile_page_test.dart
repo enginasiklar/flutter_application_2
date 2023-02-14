@@ -1,82 +1,44 @@
 import 'package:flutter/material.dart';
 
-int itemCount = 20;
-
 class ProfilePageTest extends StatelessWidget {
   const ProfilePageTest({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return AspectRatio(
-      aspectRatio: 2,
-      child: ListView(padding: const EdgeInsets.all(20), children: [
-        Container(
-          margin: const EdgeInsets.all(10),
-          padding: const EdgeInsets.all(10),
-          child: Row(
-            children: const [
-              Icon(
-                Icons.person_add,
-                size: 30,
-              ),
-              SizedBox(
-                width: 10,
-                height: 10,
-              ),
-              Text(
-                'Add profile',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              )
-            ],
-          ),
+    return ListView(padding: const EdgeInsets.all(10), children: const [
+      ListTile(
+        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        leading: Icon(
+          Icons.person_add,
+          size: 30,
         ),
-        const Divider(
-          color: Colors.black26,
+        title: Text(
+          'Add profile',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
-        Container(
-          margin: const EdgeInsets.all(10),
-          padding: const EdgeInsets.all(10),
-          child: Row(
-            children: const [
-              Icon(
-                Icons.person_remove,
-                size: 30,
-              ),
-              SizedBox(
-                width: 10,
-                height: 10,
-              ),
-              Text(
-                'Remove profile',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              )
-            ],
-          ),
+      ),
+      ListTile(
+        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        leading: Icon(
+          Icons.person_remove,
+          size: 30,
         ),
-        const Divider(
-          color: Colors.black26,
+        title: Text(
+          'Remove profile',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
-        Container(
-          margin: const EdgeInsets.all(10),
-          padding: const EdgeInsets.all(10),
-          child: Row(
-            children: const [
-              Icon(
-                Icons.settings,
-                size: 30,
-              ),
-              SizedBox(
-                width: 10,
-                height: 10,
-              ),
-              Text(
-                'App setting',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              )
-            ],
-          ),
+      ),
+      ListTile(
+        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        leading: Icon(
+          Icons.settings,
+          size: 30,
         ),
-      ]),
-    );
+        title: Text(
+          'App setting',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+      ),
+    ]);
   }
 }
