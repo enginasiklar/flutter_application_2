@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/model/stock_model.dart';
 import 'package:flutter_application_2/pages/stock_page.dart';
+import 'package:flutter_application_2/pages/change_in_data.dart';
 
 class SearchViewPage extends StatefulWidget {
   const SearchViewPage({super.key});
@@ -49,6 +50,14 @@ class _SearchViewPageState extends State<SearchViewPage> {
               return ListTile(
                 title: Text(_auxStockList[index].ticker),
                 subtitle: Text(_auxStockList[index].name),
+                trailing: SizedBox(
+                  width: 100,
+                  height: 50,
+                  child: StockChangeWidget(
+                    currentPrice: index.toDouble() + 1,
+                    previousPrice: index.toDouble() - 2,
+                  ),
+                ),
                 onTap: () {
                   Navigator.of(context)
                       .push(MaterialPageRoute(builder: (BuildContext context) {
