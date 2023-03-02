@@ -1,13 +1,7 @@
 import 'package:flutter/material.dart';
 
-class StockChangeWidget extends StatelessWidget {
-  final double currentPrice;
-  final double previousPrice;
-
-  StockChangeWidget({required this.currentPrice, required this.previousPrice});
-
-  @override
-  Widget build(BuildContext context) {
+class StockChange {
+  static Widget getChangeWidget(double currentPrice, double previousPrice) {
     final change = ((currentPrice - previousPrice) / previousPrice) * 100;
     final isPositive = change >= 0;
 
