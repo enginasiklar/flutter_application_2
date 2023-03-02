@@ -148,15 +148,23 @@ class Stock {
   final String ticker;
 
   Stock(this.ticker, this.name);
+  static final List<Stock> stockList = [
+    Stock('AAPL', 'Apple Inc.'),
+    Stock('AMZN', 'Amazon.com Inc.'),
+    Stock('GOOGL', 'Alphabet Inc.'),
+    Stock('MSFT', 'Microsoft Corporation'),
+    Stock('EBAY', 'Ebay Inc.'),
+    Stock('ADBE', 'Adobe Inc.'),
+    Stock('TSLA', 'Tesla Inc.'),
+    // add more stocks as needed
+  ];
+  static final List<String> stockListShort = [
+    'Apple',
+    'Amazon',
+    'Alphabet',
+    'Microsoft',
+    'Ebay',
+    'Adobe',
+    'Tesla',
+  ];
 }
-
-List<Stock> stocks = [
-  Stock('AAPL', 'Apple Inc.'),
-  Stock('AMZN', 'Amazon.com Inc.'),
-  Stock('GOOGL', 'Alphabet Inc.'),
-  Stock('MSFT', 'Microsoft Corporation'),
-  Stock('EBAY', 'Ebay Inc.'),
-  Stock('ADBE', 'Adobe Inc.'),
-  Stock('TSLA', 'Tesla Inc.'),
-  // add more stocks as needed
-];
