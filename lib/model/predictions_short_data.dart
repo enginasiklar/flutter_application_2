@@ -66,4 +66,27 @@ class PredictionsShortData {
       ),
     );
   }
+
+  static Future<String> getChangedValue(String stockCode) async {
+    DateTime lastMonth = DateTime(
+        DateTime.now().year, DateTime.now().month - 1, DateTime.now().day);
+    DateTime yesterday = DateTime(
+        DateTime.now().year, DateTime.now().month, DateTime.now().day - 1);
+    try {
+      List<StockData> data = await ApiService()
+          .fetchStockDataTimed(stockCode, lastMonth, yesterday);
+      if (data.isNotEmpty) {
+        // Get the most recent closing price from the fetched data
+        double yesterdayPrice = data.last.closingPrice;
+        double lastMonthPrice = data.first.closingPrice;
+        double percentageChange =
+            (yesterdayPrice - lastMonthPrice) * 100 / lastMonthPrice;
+        return percentageChange.toStringAsFixed(2);
+      } else {
+        return "#";
+      }
+    } catch (e) {
+      return "#";
+    }
+  }
 }
