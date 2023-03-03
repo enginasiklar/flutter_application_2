@@ -3,6 +3,7 @@ import '../charts/predict_line_chart.dart';
 import '../model/line_model.dart';
 import '../services/api_service.dart';
 
+// ignore: must_be_immutable
 class PredictLineDataPage extends StatelessWidget {
   PredictLineDataPage({super.key});
 

@@ -23,7 +23,7 @@ class StockData {
     if (openingPrice == 0) {
       openingPrice = closingPrice;
     }
-    var lowP, highP;
+    double lowP, highP;
     if ((closingPrice - openingPrice) > 0) {
       lowP = openingPrice;
       highP = closingPrice;

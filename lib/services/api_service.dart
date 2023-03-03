@@ -54,6 +54,7 @@ class ApiService {
       throw Exception('Failed to load album');
     }
   }
+
   Future<List<StockData>> fetchStockData(String stockCode) async {
     final response = await http.get(
       Uri.parse("${ApiConstants.candleUrl}/$stockCode"),
@@ -78,9 +79,12 @@ class ApiService {
     }
   }
 
-  Future<List<StockData>> fetchStockDataTimed(String stockCode, DateTime startDate, DateTime endDate) async {
-    String start = "${startDate.year}-${startDate.month.toString().padLeft(2, '0')}-${startDate.day.toString().padLeft(2, '0')}";
-    String end = "${endDate.year}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')}";
+  Future<List<StockData>> fetchStockDataTimed(
+      String stockCode, DateTime startDate, DateTime endDate) async {
+    String start =
+        "${startDate.year}-${startDate.month.toString().padLeft(2, '0')}-${startDate.day.toString().padLeft(2, '0')}";
+    String end =
+        "${endDate.year}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')}";
     final response = await http.get(
       Uri.parse("${ApiConstants.candleUrl}/$stockCode/start=$start&end=$end"),
       headers: {
@@ -105,9 +109,11 @@ class ApiService {
 
   Future<List<StockData>> fetchStockDataToday(String stockCode) async {
     DateTime now = DateTime.now();
-    DateTime yesterday = DateTime.now().subtract(Duration(days: 1));
-    String end = "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
-    String start = "${yesterday.year}-${yesterday.month.toString().padLeft(2, '0')}-${yesterday.day.toString().padLeft(2, '0')}";
+    DateTime yesterday = DateTime.now().subtract(const Duration(days: 1));
+    String end =
+        "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
+    String start =
+        "${yesterday.year}-${yesterday.month.toString().padLeft(2, '0')}-${yesterday.day.toString().padLeft(2, '0')}";
     final response = await http.get(
       Uri.parse("${ApiConstants.candleUrl}/$stockCode/start=$start&end=$end"),
       headers: {
@@ -129,6 +135,4 @@ class ApiService {
       throw Exception('Failed to load stock data');
     }
   }
-
-
 }

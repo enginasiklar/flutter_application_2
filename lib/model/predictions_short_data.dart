@@ -17,8 +17,6 @@ class PredictionsShortData {
           double lastMonthPrice = snapshot.data!.first.closingPrice;
           double percentageChange =
               (yesterdayPrice - lastMonthPrice) * 100 / lastMonthPrice;
-          // Update the mostRecentPrice variable
-          var mostRecentPrice = percentageChange.toStringAsFixed(2);
           if (setTextStyle) {
             return Text(
               'Change from Last Month: ${percentageChange.toStringAsFixed(2)}%',
@@ -32,7 +30,7 @@ class PredictionsShortData {
             '${percentageChange.toStringAsFixed(2)}%',
           );
         } else if (snapshot.hasError) {
-          return Text("data not found");
+          return const Text("data not found");
         } else {
           return const Center(child: CircularProgressIndicator());
         }
@@ -65,5 +63,28 @@ class PredictionsShortData {
         },
       ),
     );
+  }
+
+  static Future<String> getChangedValue(String stockCode) async {
+    DateTime lastMonth = DateTime(
+        DateTime.now().year, DateTime.now().month - 1, DateTime.now().day);
+    DateTime yesterday = DateTime(
+        DateTime.now().year, DateTime.now().month, DateTime.now().day - 1);
+    try {
+      List<StockData> data = await ApiService()
+          .fetchStockDataTimed(stockCode, lastMonth, yesterday);
+      if (data.isNotEmpty) {
+        // Get the most recent closing price from the fetched data
+        double yesterdayPrice = data.last.closingPrice;
+        double lastMonthPrice = data.first.closingPrice;
+        double percentageChange =
+            (yesterdayPrice - lastMonthPrice) * 100 / lastMonthPrice;
+        return percentageChange.toStringAsFixed(2);
+      } else {
+        return "#";
+      }
+    } catch (e) {
+      return "#";
+    }
   }
 }
