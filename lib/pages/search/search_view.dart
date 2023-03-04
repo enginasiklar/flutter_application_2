@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_2/model/predictions_short_data.dart';
 import 'package:flutter_application_2/model/stock_model.dart';
+import 'package:flutter_application_2/pages/predict_grid/predict_grid_model.dart';
 import 'package:flutter_application_2/pages/search/search_model.dart';
 import 'package:flutter_application_2/pages/stock_page.dart';
-import 'package:flutter_application_2/pages/change_in_data.dart';
 
 class SearchViewPage extends StatefulWidget {
   const SearchViewPage({super.key});
@@ -45,10 +46,31 @@ class _SearchViewPageState extends State<SearchViewPage> {
                 subtitle: Text(_auxStockList[index].name),
                 trailing: SizedBox(
                   height: 50,
-                  width: 115,
-                  child: StockChange.getChangeWidget(
-                    index.toDouble() + 1,
-                    index.toDouble() - 2,
+                  width: 80,
+                  child: FutureBuilder(
+                    future: PredictionsShortData.getChangedValue(
+                        _auxStockList[index].ticker),
+                    initialData: '#',
+                    builder: (BuildContext context, AsyncSnapshot snapshot) {
+                      if (snapshot.data.toString().contains("#")) {
+                        return Text(
+                          "${snapshot.data}",
+                          style: TextStyle(color: PredictGrid.blue),
+                        );
+                      } else if (snapshot.data.toString().contains("-")) {
+                        return Text(
+                          "${snapshot.data}%",
+                          style: const TextStyle(
+                              color: PredictGrid.red, fontSize: 15),
+                        );
+                      } else {
+                        return Text(
+                          "${snapshot.data}%",
+                          style: const TextStyle(
+                              color: PredictGrid.green, fontSize: 15),
+                        );
+                      }
+                    },
                   ),
                 ),
                 onTap: () {
