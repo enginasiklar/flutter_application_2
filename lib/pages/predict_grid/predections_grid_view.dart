@@ -12,7 +12,7 @@ class PredectionsGridView extends StatelessWidget {
   Widget build(BuildContext context) {
     return GridView.builder(
       gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-        maxCrossAxisExtent: 200,
+        maxCrossAxisExtent: 150,
       ),
       itemCount: data.length,
       itemBuilder: (BuildContext context, int index) {
