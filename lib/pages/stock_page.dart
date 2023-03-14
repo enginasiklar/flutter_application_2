@@ -96,14 +96,14 @@ class _StockPageState extends State<StockPage> {
                   xValueMapper: (StockData data, _) => data.date,
                   yValueMapper: (StockData data, _) => data.closingPrice,
                   color: Colors.red.shade200,
-                  legendItemText: "data in red",
+                  legendItemText: "Predicted Price",
                 ),
                 LineSeries<StockData, DateTime>(
                   dataSource: chartData,
                   xValueMapper: (StockData data, _) => data.date,
                   yValueMapper: (StockData data, _) => data.openingPrice,
                   color: Colors.green,
-                  legendItemText: "data in green",
+                  legendItemText: "Real Price",
                 ),
               ],
               primaryXAxis: DateTimeAxis(
