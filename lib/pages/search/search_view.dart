@@ -48,7 +48,7 @@ class _SearchViewPageState extends State<SearchViewPage> {
                   height: 50,
                   width: 80,
                   child: FutureBuilder(
-                    future: PredictionsShortData.getChangedValue(
+                    future: PredictionsData.getChangedValue(
                         _auxStockList[index].ticker),
                     initialData: '#',
                     builder: (BuildContext context, AsyncSnapshot snapshot) {

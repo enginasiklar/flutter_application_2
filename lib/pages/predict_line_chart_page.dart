@@ -8,6 +8,7 @@ class PredictLineDataPage extends StatelessWidget {
   PredictLineDataPage({super.key});
 
   bool closeViewed = false;
+  Future<List<LineData>> lineData = ApiService().getLineData();
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +16,7 @@ class PredictLineDataPage extends StatelessWidget {
       padding: const EdgeInsets.all(15),
       child: Center(
         child: FutureBuilder<List<LineData>>(
-          future: ApiService().getLineData(),
+          future: lineData,
           builder: (
             BuildContext context,
             AsyncSnapshot snapshot,

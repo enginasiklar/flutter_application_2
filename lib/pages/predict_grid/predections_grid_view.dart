@@ -17,8 +17,7 @@ class PredectionsGridView extends StatelessWidget {
       itemCount: data.length,
       itemBuilder: (BuildContext context, int index) {
         return FutureBuilder(
-          future:
-              PredictionsShortData.getChangedValue(data[index].stock.ticker),
+          future: PredictionsData.getChangedValue(data[index].stock.ticker),
           initialData: '#',
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             Color color;
