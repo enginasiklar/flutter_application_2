@@ -24,8 +24,12 @@ class StockPage extends StatefulWidget {
 class _StockPageState extends State<StockPage> {
   late Future<List<StockData>> _chartData;
 
-  final TrackballBehavior _trackballBehavior =
-      TrackballBehavior(enable: true, activationMode: ActivationMode.singleTap);
+  final TrackballBehavior _trackballBehavior = TrackballBehavior(
+    enable: true,
+    activationMode: ActivationMode.singleTap,
+    tooltipDisplayMode: TrackballDisplayMode.groupAllPoints,
+    shouldAlwaysShow: true,
+  );
 
   late DateTime _startDate;
   late DateTime _endDate;
@@ -33,11 +37,16 @@ class _StockPageState extends State<StockPage> {
   TextEditingController startDateController = TextEditingController();
   TextEditingController endDateController = TextEditingController();
   bool _showLineChart = false;
+  ZoomPanBehavior zoomPanBehavior = ZoomPanBehavior(
+    enableDoubleTapZooming: true,
+    enablePanning: true,
+    enablePinching: true,
+  );
 
   @override
   void initState() {
     super.initState();
-    _chartData = ApiService().fetchStockData(widget.stockCode);
+    _chartData = PredictionsData.getStockData(widget.stockCode);
   }
 
   List<List<StockData>> chartsTimes = [[], [], []];
@@ -57,6 +66,15 @@ class _StockPageState extends State<StockPage> {
               });
             },
           ),
+          IconButton(
+              onPressed: () async {
+                await PredictionsData.forceRefreshData(widget.stockCode);
+                setState(() {
+                  _chartData = PredictionsData.getStockData(widget.stockCode);
+                });
+              },
+              tooltip: "refesh data",
+              icon: const Icon(Icons.refresh))
         ],
       ),
       body: _buildChart(),
@@ -67,10 +85,56 @@ class _StockPageState extends State<StockPage> {
     return Column(
       children: <Widget>[
         datesSetBar(),
-        _showLineChart ? _buildLineChart() : _buildCandleChart(),
+        buildZoomBarChart(),
         predictedAndChangePrice(),
         buttonsDWM(),
       ],
+    );
+  }
+
+  Widget buildZoomBarChart() {
+    return Expanded(
+      child: Stack(
+        children: [
+          _showLineChart ? _buildLineChart() : _buildCandleChart(),
+          Positioned(
+            top: 10,
+            right: 10,
+            child: ButtonBar(
+              buttonPadding: const EdgeInsets.all(0),
+              children: [
+                IconButton(
+                    onPressed: () {
+                      zoomPanBehavior.zoomIn();
+                    },
+                    icon: const Text(
+                      "+",
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    )),
+                IconButton(
+                    onPressed: () {
+                      zoomPanBehavior.reset();
+                    },
+                    icon: const Text(
+                      "o",
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    )),
+                IconButton(
+                    onPressed: () {
+                      zoomPanBehavior.zoomOut();
+                    },
+                    icon: const Text(
+                      "-",
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    )),
+              ],
+            ),
+          )
+        ],
+      ),
     );
   }
 
@@ -84,15 +148,12 @@ class _StockPageState extends State<StockPage> {
             final List<StockData> chartData = snapshot.data!;
             return SfCartesianChart(
               legend: Legend(isVisible: true),
-              zoomPanBehavior: ZoomPanBehavior(
-                enableDoubleTapZooming: true,
-                enablePanning: true,
-                enablePinching: true,
-              ),
+              zoomPanBehavior: zoomPanBehavior,
               trackballBehavior: _trackballBehavior,
               series: <LineSeries>[
                 LineSeries<StockData, DateTime>(
                   dataSource: chartData,
+                  name: "Predicted Price",
                   xValueMapper: (StockData data, _) => data.date,
                   yValueMapper: (StockData data, _) => data.closingPrice,
                   color: Colors.red.shade200,
@@ -100,11 +161,24 @@ class _StockPageState extends State<StockPage> {
                 ),
                 LineSeries<StockData, DateTime>(
                   dataSource: chartData,
+                  name: "Real Price",
                   xValueMapper: (StockData data, _) => data.date,
                   yValueMapper: (StockData data, _) => data.openingPrice,
                   color: Colors.green,
                   legendItemText: "Real Price",
                 ),
+                LineSeries<StockData, DateTime>(
+                  dataSource: chartData,
+                  name: "Prediction difference",
+                  xValueMapper: (StockData data, _) => data.date,
+                  yValueMapper: (StockData data, _) {
+                    return (data.openingPrice.round() -
+                            data.closingPrice.round())
+                        .abs();
+                  },
+                  color: Colors.red.shade100,
+                  legendItemText: "Prediction difference",
+                )
               ],
               primaryXAxis: DateTimeAxis(
                 dateFormat: DateFormat.MMM(),
@@ -178,8 +252,11 @@ class _StockPageState extends State<StockPage> {
             child: const Text('Submit'),
             onPressed: () {
               setState(() {
-                _chartData = ApiService().fetchStockDataTimed(
-                    widget.stockCode, _startDate, _endDate);
+                _chartData = PredictionsData.getStockDataDates(
+                        widget.stockCode, _startDate, _endDate)
+                    // ApiService().fetchStockDataTimed(
+                    //     widget.stockCode, _startDate, _endDate)
+                    ;
               });
             },
           ),
@@ -207,10 +284,9 @@ class _StockPageState extends State<StockPage> {
             chartsTimes[1] = StockData.getWeekly(chartSampleData);
             chartsTimes[2] = StockData.getMonthly(chartsTimes[1]);
             return SfCartesianChart(
-              zoomPanBehavior: ZoomPanBehavior(
-                  enableDoubleTapZooming: true, enablePanning: true),
+              zoomPanBehavior: zoomPanBehavior,
               trackballBehavior: _trackballBehavior,
-              series: <CandleSeries>[
+              series: [
                 CandleSeries<StockData, DateTime>(
                     dataSource: chartsTimes[chartTimesIndex],
                     name: widget.stockCode,
@@ -219,7 +295,19 @@ class _StockPageState extends State<StockPage> {
                     highValueMapper: (StockData sales, _) => sales.highPrice,
                     openValueMapper: (StockData sales, _) => sales.openingPrice,
                     closeValueMapper: (StockData sales, _) =>
-                        sales.closingPrice)
+                        sales.closingPrice),
+                LineSeries<StockData, DateTime>(
+                  dataSource: chartsTimes[chartTimesIndex],
+                  name: "Prediction difference",
+                  xValueMapper: (StockData data, _) => data.date,
+                  yValueMapper: (StockData data, _) {
+                    return (data.openingPrice.round() -
+                            data.closingPrice.round())
+                        .abs();
+                  },
+                  color: Colors.red.shade100,
+                  legendItemText: "Prediction difference",
+                )
               ],
               primaryXAxis: DateTimeAxis(
                   dateFormat: DateFormat.MMM(),
@@ -242,11 +330,10 @@ class _StockPageState extends State<StockPage> {
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
         children: [
-          PredictionsShortData.getPredictedPrice(widget.stockCode),
+          PredictionsData.getPredictedPrice(widget.stockCode),
           const Divider(),
           Expanded(
-            child:
-                PredictionsShortData.getChangeLastMonth(widget.stockCode, true),
+            child: PredictionsData.getChangeLastMonth(widget.stockCode, true),
           ),
         ],
       ),
