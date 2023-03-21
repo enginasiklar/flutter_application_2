@@ -9,16 +9,13 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
+      length: 2,
       child: Scaffold(
         appBar: AppBar(
           toolbarHeight: 0,
           bottom: const TabBar(tabs: [
             Tab(
               icon: Icon(Icons.multiline_chart_rounded),
-            ),
-            Tab(
-              icon: Icon(Icons.stacked_line_chart_rounded),
             ),
             Tab(
               icon: Icon(Icons.crop_square_rounded),
@@ -28,7 +25,6 @@ class HomePage extends StatelessWidget {
         backgroundColor: Colors.amber[40],
         body: TabBarView(children: [
           GaugeRangePage(),
-          PredictLineDataPage(),
           PredectionsGridView(),
         ]),
       ),

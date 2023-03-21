@@ -87,4 +87,47 @@ class PredictionsShortData {
       return "#";
     }
   }
+
+  static Widget getCompAbs(String stockCode) {
+    late Future<List<StockData>> predictedPrice;
+    predictedPrice = ApiService().fetchStockDataToday(stockCode);
+    return Expanded(
+      child: FutureBuilder<List<StockData>>(
+        future: predictedPrice,
+        builder:
+            (BuildContext context, AsyncSnapshot<List<StockData>> snapshot) {
+          if (snapshot.hasData) {
+            // Get the most recent closing price from the fetched data
+            double predictedPrice = snapshot.data!.last.closingPrice;
+            double realPrice = snapshot.data!.last.closingPrice;
+            // Update the mostRecentPrice variable
+            var difference = predictedPrice - realPrice;
+            var percentageChange = (difference * 100) / realPrice;
+            return Row(
+              children: [
+              Text(
+              'Abs Difference: $difference',
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+                const Divider(),
+                Text(
+                'Percentage Difference: ${percentageChange.toStringAsFixed(2)}%',
+                style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: percentageChange > 0 ? Colors.green : Colors.red),
+                ),
+              ],
+            );
+          } else if (snapshot.hasError) {
+            return Text("${snapshot.error}");
+          } else {
+            return const Center(child: CircularProgressIndicator());
+          }
+        },
+      ),
+    );
+  }
+
+
 }

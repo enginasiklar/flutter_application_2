@@ -64,15 +64,28 @@ class _StockPageState extends State<StockPage> {
   }
 
   Widget _buildChart() {
-    return Column(
-      children: <Widget>[
-        datesSetBar(),
-        _showLineChart ? _buildLineChart() : _buildCandleChart(),
-        predictedAndChangePrice(),
-        buttonsDWM(),
-      ],
-    );
+    if(_showLineChart){
+      return Column(
+        children: <Widget>[
+          datesSetBar(),
+          _buildLineChart(),
+          predictedAndChangePrice(),
+          buttonsDWM(),
+        ],
+      );
+    }
+    else{
+      return Column(
+        children: <Widget>[
+          datesSetBar(),
+          _buildCandleChart(),
+          predictionSuccessRate(),
+        ],
+      );
+
+    }
   }
+
 
   Widget _buildLineChart() {
     return Expanded(
@@ -250,6 +263,13 @@ class _StockPageState extends State<StockPage> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget predictionSuccessRate() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: PredictionsShortData.getCompAbs(widget.stockCode),
     );
   }
 
