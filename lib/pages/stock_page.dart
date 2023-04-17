@@ -1,5 +1,10 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/model/predictions_short_data.dart';
+import 'package:flutter_application_2/notifications/followed_stock_item.dart';
+import 'package:flutter_application_2/notifications/followed_stock_model.dart';
+import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:intl/intl.dart';
 import '../model/stock_model.dart';
@@ -57,6 +62,22 @@ class _StockPageState extends State<StockPage> {
       appBar: AppBar(
         title: Text(widget.stockName),
         actions: [
+          IconButton(
+              onPressed: () {
+                // TODO: the value added is random, to be changed to the real one
+                Provider.of<FollowedStocksModel>(context, listen: false)
+                    .alterExistance(FollowedStockItem(
+                        widget.stockCode,
+                        widget.stockName,
+                        ((Random().nextDouble() * 10 - 5) * 100)
+                                .roundToDouble() /
+                            100));
+                setState(() {});
+              },
+              tooltip: "Follow",
+              icon: FollowedStocksModel().doesExist(widget.stockCode)
+                  ? const Icon(Icons.star_rounded)
+                  : const Icon(Icons.star_border_rounded)),
           Switch(
             activeColor: const Color.fromARGB(200, 255, 120, 120),
             value: _showLineChart,

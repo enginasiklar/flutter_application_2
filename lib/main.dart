@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_2/notifications/followed_stock_list_view.dart';
+import 'package:flutter_application_2/notifications/followed_stock_model.dart';
 import 'package:flutter_application_2/pages/home_page.dart';
 import 'package:flutter_application_2/pages/profile_page_test.dart';
 import 'package:flutter_application_2/pages/search/search_view.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => FollowedStocksModel(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -48,7 +56,17 @@ class _RootPageState extends State<RootPage> {
                   return const SearchViewPage();
                 }));
               },
-              icon: const Icon(Icons.search))
+              icon: const Icon(Icons.search)),
+          IconButton(
+              tooltip: "Notifications",
+              onPressed: () {
+                Navigator.of(context)
+                    .push(MaterialPageRoute(builder: (BuildContext context) {
+                  // return const stockPage();
+                  return FollowedStocksListView();
+                }));
+              },
+              icon: const Icon(Icons.notifications))
         ],
       ),
       body: pages[currentPage],
