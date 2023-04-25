@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/notifications/followed_stock_list_view.dart';
 import 'package:flutter_application_2/notifications/followed_stock_model.dart';
@@ -6,7 +7,11 @@ import 'package:flutter_application_2/pages/profile_page_test.dart';
 import 'package:flutter_application_2/pages/search/search_view.dart';
 import 'package:provider/provider.dart';
 
-void main() {
+import 'firebase_options.dart';
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(
     ChangeNotifierProvider(
       create: (context) => FollowedStocksModel(),

@@ -8,7 +8,6 @@ import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:intl/intl.dart';
 import '../model/stock_model.dart';
-import '../services/api_service.dart';
 
 //TODO a better and more customizable graph required to change the last stick to different color to signify it being the prediction
 //TODO more memory efficient graph data loading using the time constrained calling of api
@@ -199,7 +198,20 @@ class _StockPageState extends State<StockPage> {
                   },
                   color: Colors.red.shade100,
                   legendItemText: "Prediction difference",
+                ),
+                LineSeries<StockData, DateTime>(
+                  dataSource: chartData,
+                  name: "Prediction percentage",
+                  xValueMapper: (StockData data, _) => data.date,
+                  yValueMapper: (StockData data, _) {
+                    return ((data.openingPrice -
+                        data.closingPrice) * 100 / data.openingPrice).
+                    abs();
+                  },
+                  color: Colors.blue.shade100,
+                  legendItemText: "Prediction percentage",
                 )
+
               ],
               primaryXAxis: DateTimeAxis(
                 dateFormat: DateFormat.MMM(),
@@ -328,7 +340,20 @@ class _StockPageState extends State<StockPage> {
                   },
                   color: Colors.red.shade100,
                   legendItemText: "Prediction difference",
-                )
+                ),
+              LineSeries<StockData, DateTime>(
+              dataSource: chartsTimes[chartTimesIndex],
+              name: "Prediction percentage",
+              xValueMapper: (StockData data, _) => data.date,
+              yValueMapper: (StockData data, _) {
+                return ((data.openingPrice -
+                    data.closingPrice) * 100 / data.openingPrice).
+                abs();
+              },
+              color: Colors.blue.shade100,
+              legendItemText: "Prediction percentage",
+              )
+
               ],
               primaryXAxis: DateTimeAxis(
                   dateFormat: DateFormat.MMM(),
@@ -356,10 +381,15 @@ class _StockPageState extends State<StockPage> {
           Expanded(
             child: PredictionsData.getChangeLastMonth(widget.stockCode, true),
           ),
+          const Divider(),
+          Expanded(
+            child: PredictionsData.getMonthlyChangeAvg(widget.stockCode, true),
+            ),
         ],
       ),
     );
   }
+
 
   Widget buttonsDWM() {
     return ButtonBar(

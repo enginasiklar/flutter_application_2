@@ -3,7 +3,7 @@ import 'package:flutter_application_2/model/stock_model.dart';
 import 'package:flutter_application_2/services/api_service.dart';
 
 class PredictionsData {
-  /* in stocksData map variable, stocks and thiere data are stored
+  /* in stocksData map variable, stocks and their data are stored
   data can be fetched just once and saved temp. in this variable
    */
   static Map<String, List<StockData>> stocksData = {};
@@ -17,7 +17,7 @@ class PredictionsData {
     return stocksData[stockCode]!.toList();
   }
 
-// force update data for a certine stock
+// force update data for a certain stock
   static forceRefreshData(String stockCode) async {
     stocksData[stockCode] = await ApiService().fetchStockData(stockCode);
   }
@@ -160,15 +160,54 @@ class PredictionsData {
     );
   }
 
+  static Widget getMonthlyChangeAvg(String stockCode, bool setTextStyle) {
+    DateTime lastMonth = DateTime(
+        DateTime.now().year, DateTime.now().month - 1, DateTime.now().day);
+    DateTime yesterday = DateTime(
+        DateTime.now().year, DateTime.now().month, DateTime.now().day - 1);
+    return FutureBuilder<List<StockData>>(
+      future: getStockDataDates(stockCode, lastMonth, yesterday),
+      builder: (BuildContext context, AsyncSnapshot<List<StockData>> snapshot) {
+        if (snapshot.hasData) {
+          double sumPercentageChange = 0;
+          for (int i = 0; i < snapshot.data!.length; i++) {
+            double percentageChange = (snapshot.data![i].closingPrice - snapshot.data![i].openingPrice).abs() * 100 / snapshot.data![i].openingPrice;
+            sumPercentageChange += percentageChange;
+          }
+          double avgPercentageChange = sumPercentageChange / snapshot.data!.length;
+
+          if (setTextStyle) {
+            return Text(
+              'Monthly Average Prediction Difference: ${avgPercentageChange.toStringAsFixed(2)}%',
+              style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: avgPercentageChange > 2 ? Colors.red : Colors.green),
+            );
+          }
+          return Text(
+            '${avgPercentageChange.toStringAsFixed(2)}%',
+          );
+        } else if (snapshot.hasError) {
+          return const Text("data not found");
+        } else {
+          return const Center(child: CircularProgressIndicator());
+        }
+      },
+    );
+  }
+
+
   static Widget getPredictedPrice(String stockCode) {
     late Future<List<StockData>> predictedPrice;
-    DateTime now = DateTime.now().copyWith(
+    DateTime now = DateTime.now()
+    /*.copyWith(
       hour: 0,
       minute: 0,
       second: 0,
       millisecond: 0,
       microsecond: 0,
-    );
+    )*/;
     DateTime yesterday = now.subtract(const Duration(days: 1));
     predictedPrice = getStockDataDates(stockCode, yesterday, now);
     return Expanded(
@@ -235,17 +274,18 @@ class PredictionsData {
             var percentageChange = (difference * 100) / realPrice;
             return Row(
               children: [
-              Text(
-              'Abs Difference: $difference',
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
+                Text(
+                  'Abs Difference: $difference',
+                  style: const TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.bold),
+                ),
                 const Divider(),
                 Text(
-                'Percentage Difference: ${percentageChange.toStringAsFixed(2)}%',
-                style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: percentageChange > 0 ? Colors.green : Colors.red),
+                  'Percentage Difference: ${percentageChange.toStringAsFixed(2)}%',
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: percentageChange > 0 ? Colors.green : Colors.red),
                 ),
               ],
             );
@@ -258,6 +298,4 @@ class PredictionsData {
       ),
     );
   }
-
-
 }
