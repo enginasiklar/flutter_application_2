@@ -1,11 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_2/pages/login_page.dart';
 import 'package:flutter_application_2/pages/profile_page.dart';
 import 'package:flutter_application_2/services/auth_service.dart';
 
 class LoginPage extends StatelessWidget {
   final AuthService _auth = AuthService();
+
+  LoginPage({super.key});
 
   @override
   Widget build(BuildContext context) {
