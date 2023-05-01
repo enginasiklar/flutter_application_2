@@ -9,7 +9,7 @@ import 'followed_stock_item.dart';
 import 'following_setting_view.dart';
 
 class FollowedStocksListView extends StatefulWidget {
-  FollowedStocksListView({super.key});
+  const FollowedStocksListView({super.key});
 
   @override
   State<FollowedStocksListView> createState() => _FollowedStocksListViewState();
@@ -118,7 +118,7 @@ class _FollowedStocksListViewState extends State<FollowedStocksListView> {
                                   notificationModel[index].stockName,
                                   notificationModel[index].stockCode);
                             },
-                            icon: Icon(Icons.settings)),
+                            icon: const Icon(Icons.settings)),
                         onTap: () {
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (BuildContext context) {
