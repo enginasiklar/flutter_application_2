@@ -2,8 +2,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/notifications/followed_stock_list_view.dart';
 import 'package:flutter_application_2/notifications/followed_stock_model.dart';
+import 'package:flutter_application_2/pages/auth/login_view.dart';
 import 'package:flutter_application_2/pages/home_page.dart';
-import 'package:flutter_application_2/pages/profile_page_test.dart';
+import 'package:flutter_application_2/pages/profile_page.dart';
 import 'package:flutter_application_2/pages/search/search_view.dart';
 import 'package:provider/provider.dart';
 
@@ -31,21 +32,36 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.lightGreen,
       ),
-      home: const RootPage(title: 'XFlutter Demo main title'),
+      home: LoginView(),
     );
   }
 }
 
 class RootPage extends StatefulWidget {
-  const RootPage({super.key, required this.title});
-  final String title;
+  const RootPage({
+    super.key,
+    required this.userName,
+  });
+  final String title = 'XFlutter Demo main title';
+  final String userName;
   @override
   State<RootPage> createState() => _RootPageState();
 }
 
 class _RootPageState extends State<RootPage> {
   int currentPage = 0;
-  List<Widget> pages = const [HomePage(), ProfilePageTest()];
+  List<Widget> pages = [];
+  @override
+  void initState() {
+    super.initState();
+    pages = [
+      const HomePage(),
+      ProfilePage(
+        userName: widget.userName,
+      )
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -68,7 +84,7 @@ class _RootPageState extends State<RootPage> {
                 Navigator.of(context)
                     .push(MaterialPageRoute(builder: (BuildContext context) {
                   // return const stockPage();
-                  return FollowedStocksListView();
+                  return const FollowedStocksListView();
                 }));
               },
               icon: const Icon(Icons.notifications))
