@@ -62,9 +62,15 @@ class LoginView extends StatelessWidget {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) {
-                        return RootPage(
-                          userName: value!.user!.displayName!,
-                        );
+                        if (value == null) {
+                          return const RootPage(
+                            userName: "Guest",
+                          );
+                        } else {
+                          return RootPage(
+                            userName: value.user!.displayName!,
+                          );
+                        }
                       },
                     ),
                   );
