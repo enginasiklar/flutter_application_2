@@ -33,7 +33,7 @@ class AuthMethod {
     // Create an instance of the firebase auth and google signin
     FirebaseAuth auth = FirebaseAuth.instance;
     final GoogleSignIn googleSignIn = GoogleSignIn();
-    try {} catch (e) {
+    try {
       //Triger the authentication flow
       final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
 
@@ -48,7 +48,7 @@ class AuthMethod {
       //Sign in the user with the credentials
       userCredential = await auth.signInWithCredential(credential);
       return userCredential;
-    }
+    } catch (e) {}
     return null;
   }
 }
