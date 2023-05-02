@@ -11,6 +11,8 @@ class AuthMethod {
     }
     final GoogleSignIn googleSign = GoogleSignIn();
     await googleSign.signOut();
+    FirebaseAuth auth = FirebaseAuth.instance;
+    await auth.signOut();
   }
 
   static Future<UserCredential?> signInWithGoogle() async {
