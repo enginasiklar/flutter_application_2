@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/main.dart';
-import 'package:flutter_application_2/pages/auth/auth_method.dart';
+import 'package:flutter_application_2/auth/auth_method.dart';
 
 class LoginView extends StatelessWidget {
   LoginView({super.key});

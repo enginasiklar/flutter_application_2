@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_2/pages/auth/login_view.dart';
-import 'auth/auth_method.dart';
+import 'package:flutter_application_2/auth/login_view.dart';
+import '../auth/auth_method.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key, required this.userName});
