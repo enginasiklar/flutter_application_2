@@ -26,14 +26,7 @@ class ProfilePage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(15)))),
               onPressed: () async {
                 await AuthMethod.logout().then((value) {
-                  Navigator.pop(context);
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return LoginView();
-                      },
-                    ),
-                  );
+                  Navigator.popAndPushNamed(context, LoginView.title);
                 });
               },
               child: const Padding(

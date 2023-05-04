@@ -4,10 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_2/main.dart';
 import 'package:flutter_application_2/auth/auth_method.dart';
 
+import '../main_home_view.dart';
+import 'err_page_view.dart';
+
 class LoginView extends StatelessWidget {
   LoginView({super.key});
 
   FirebaseAuth auth = FirebaseAuth.instance;
+  static String title = "/login";
 
   String logoPath = "assets/images/GSlogoS.png";
 
@@ -58,22 +62,14 @@ class LoginView extends StatelessWidget {
               onPressed: () async {
                 UserCredential? userCredential =
                     await AuthMethod.signInWithGoogle().then((value) {
-                  Navigator.of(context).pop();
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) {
-                        if (value == null) {
-                          return const RootPage(
-                            userName: "Guest",
-                          );
-                        } else {
-                          return RootPage(
-                            userName: value.user!.displayName!,
-                          );
-                        }
-                      },
-                    ),
-                  );
+                  if (value != null) {
+                    Navigator.popAndPushNamed(
+                      context,
+                      MainHomeView.title,
+                    );
+                  } else {
+                    Navigator.popAndPushNamed(context, ErrPageView.title);
+                  }
                 });
               },
               child: const Padding(

@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_2/main_home_view.dart';
 import 'package:flutter_application_2/notifications/followed_stock_list_view.dart';
 import 'package:flutter_application_2/notifications/followed_stock_model.dart';
 import 'package:flutter_application_2/auth/login_view.dart';
@@ -8,6 +10,7 @@ import 'package:flutter_application_2/pages/profile_page.dart';
 import 'package:flutter_application_2/pages/search/search_view.dart';
 import 'package:provider/provider.dart';
 
+import 'auth/err_page_view.dart';
 import 'firebase_options.dart';
 
 Future<void> main() async {
@@ -32,7 +35,11 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.lightGreen,
       ),
-      home: LoginView(),
+      routes: <String, Widget Function(BuildContext)>{
+        MainHomeView.title: (context) => const MainHomeView(),
+        ErrPageView.title: (context) => const ErrPageView(),
+        LoginView.title: (context) => LoginView(),
+      },
     );
   }
 }
@@ -42,7 +49,8 @@ class RootPage extends StatefulWidget {
     super.key,
     required this.userName,
   });
-  final String title = 'XFlutter Demo main title';
+  final String appTitle = 'XFlutter Demo main title';
+  static String title = "/root";
   final String userName;
   @override
   State<RootPage> createState() => _RootPageState();
@@ -66,7 +74,7 @@ class _RootPageState extends State<RootPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(widget.appTitle),
         actions: [
           IconButton(
               tooltip: "search",
