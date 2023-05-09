@@ -1,10 +1,17 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_2/auth/login_view.dart';
-import '../auth/auth_method.dart';
 
 class ProfilePage extends StatelessWidget {
-  const ProfilePage({super.key, required this.userName});
-  final String userName;
+  const ProfilePage({Key? key, required this.user}) : super(key: key);
+
+  final User user;
+
+  Future<void> _logout(BuildContext context) async {
+    await FirebaseAuth.instance.signOut();
+    if (Navigator.canPop(context)) {
+      Navigator.pop(context);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -14,28 +21,13 @@ class ProfilePage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              "Hi, $userName",
-              style: const TextStyle(fontSize: 20),
+              'Welcome ${user.displayName}',
+              style: const TextStyle(fontSize: 24),
             ),
-            const SizedBox(
-              height: 20,
-            ),
+            const SizedBox(height: 16),
             ElevatedButton(
-              style: ButtonStyle(
-                  shape: MaterialStatePropertyAll(RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15)))),
-              onPressed: () async {
-                await AuthMethod.logout().then((value) {
-                  Navigator.popAndPushNamed(context, LoginView.title);
-                });
-              },
-              child: const Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Text(
-                  'Logout',
-                  style: TextStyle(fontSize: 20),
-                ),
-              ),
+              onPressed: () => _logout(context),
+              child: const Text('Logout'),
             ),
           ],
         ),
@@ -43,3 +35,4 @@ class ProfilePage extends StatelessWidget {
     );
   }
 }
+
