@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_application_2/constants.dart';
 import 'package:flutter_application_2/model/user_model.dart';
 
+import '../model/main_model.dart';
 import '../model/stock_model.dart';
 
 class ApiService {
@@ -79,8 +80,7 @@ class ApiService {
     }
   }
 
-  Future<List<StockData>> fetchStockDataTimed(
-      String stockCode, DateTime startDate, DateTime endDate) async {
+  Future<List<StockData>> fetchStockDataTimed(String stockCode, DateTime startDate, DateTime endDate) async {
     String start =
         "${startDate.year}-${startDate.month.toString().padLeft(2, '0')}-${startDate.day.toString().padLeft(2, '0')}";
     String end =
@@ -135,4 +135,31 @@ class ApiService {
       throw Exception('Failed to load stock data');
     }
   }
+
+  Future<Map<String, MainModel>> fetchMainData() async {
+    final response = await http.get(
+      Uri.parse("${ApiConstants.mainUrl}/api/stocks/"),
+      headers: {
+        'Authorization': 'Basic ${base64Encode(utf8.encode('uysm:pecnet'))}',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      // If the call to the API was successful, parse the JSON.
+      final data = jsonDecode(response.body) as Map<String, dynamic>;
+      final mainData = data.map((key, value) {
+        final mainModel = MainModel.fromJson(value);
+        return MapEntry(key, mainModel);
+      });
+
+      MainModel.data = mainData; // Set the mainData using the static setter
+
+      return mainData;
+    } else {
+      // If that call was not successful, throw an error.
+      throw Exception('Failed to load stock data from API');
+    }
+  }
+
+
 }

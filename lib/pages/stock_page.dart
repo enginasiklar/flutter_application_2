@@ -1,13 +1,18 @@
 import 'dart:math';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/model/predictions_short_data.dart';
 import 'package:flutter_application_2/notifications/followed_stock_item.dart';
 import 'package:flutter_application_2/notifications/followed_stock_model.dart';
+import 'package:flutter_application_2/pages/stock_data_page.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:intl/intl.dart';
+import '../model/main_model.dart';
 import '../model/stock_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 //TODO a better and more customizable graph required to change the last stick to different color to signify it being the prediction
 //TODO more memory efficient graph data loading using the time constrained calling of api
@@ -24,6 +29,9 @@ class StockPage extends StatefulWidget {
   @override
   State<StockPage> createState() => _StockPageState();
 }
+
+final CollectionReference favorites =
+    FirebaseFirestore.instance.collection('favorites');
 
 class _StockPageState extends State<StockPage> {
   late Future<List<StockData>> _chartData;
@@ -53,8 +61,29 @@ class _StockPageState extends State<StockPage> {
     _chartData = PredictionsData.getStockData(widget.stockCode);
   }
 
+  Future<void> addFav() async {
+
+    final user = FirebaseAuth.instance.currentUser;
+    final userID = user?.uid;
+    print("mango");
+
+    var db = FirebaseFirestore.instance;
+
+
+    // Add a new document with a generated id.
+    final data = {
+      "userID": userID,
+      "tickerID": widget.stockCode,    };
+    db.collection("favorites").add(data).then((documentSnapshot) =>
+        print("Added Data with ID: ${documentSnapshot.id}"));
+
+    print("jango");
+
+  }
+
   List<List<StockData>> chartsTimes = [[], [], []];
   int chartTimesIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,21 +91,26 @@ class _StockPageState extends State<StockPage> {
         title: Text(widget.stockName),
         actions: [
           IconButton(
-              onPressed: () {
-                // TODO: the value added is random, to be changed to the real one
-                Provider.of<FollowedStocksModel>(context, listen: false)
-                    .alterExistance(FollowedStockItem(
-                        widget.stockCode,
-                        widget.stockName,
-                        ((Random().nextDouble() * 10 - 5) * 100)
-                                .roundToDouble() /
-                            100));
-                setState(() {});
-              },
-              tooltip: "Follow",
-              icon: FollowedStocksModel().doesExist(widget.stockCode)
-                  ? const Icon(Icons.star_rounded)
-                  : const Icon(Icons.star_border_rounded)),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (BuildContext context) =>
+                      StockDataPage(widget.stockCode),
+                ),
+              );
+            },
+            tooltip: "Information",
+            icon: const Icon(Icons.info_outline),
+          ),
+          IconButton(
+            onPressed: () {
+              addFav();
+              setState(() {}); // Update the UI
+            },
+            icon: Icon(
+              Icons.star,
+            ),
+          ),
           Switch(
             activeColor: const Color.fromARGB(200, 255, 120, 120),
             value: _showLineChart,
@@ -87,14 +121,15 @@ class _StockPageState extends State<StockPage> {
             },
           ),
           IconButton(
-              onPressed: () async {
-                await PredictionsData.forceRefreshData(widget.stockCode);
-                setState(() {
-                  _chartData = PredictionsData.getStockData(widget.stockCode);
-                });
-              },
-              tooltip: "refesh data",
-              icon: const Icon(Icons.refresh))
+            onPressed: () async {
+              await PredictionsData.forceRefreshData(widget.stockCode);
+              setState(() {
+                _chartData = PredictionsData.getStockData(widget.stockCode);
+              });
+            },
+            tooltip: "Refresh data",
+            icon: const Icon(Icons.refresh),
+          ),
         ],
       ),
       body: _buildChart(),
@@ -106,7 +141,6 @@ class _StockPageState extends State<StockPage> {
       children: <Widget>[
         datesSetBar(),
         buildZoomBarChart(),
-        predictedAndChangePrice(),
         buttonsDWM(),
       ],
     );
@@ -204,14 +238,14 @@ class _StockPageState extends State<StockPage> {
                   name: "Prediction percentage",
                   xValueMapper: (StockData data, _) => data.date,
                   yValueMapper: (StockData data, _) {
-                    return ((data.openingPrice -
-                        data.closingPrice) * 100 / data.openingPrice).
-                    abs();
+                    return ((data.openingPrice - data.closingPrice) *
+                            100 /
+                            data.openingPrice)
+                        .abs();
                   },
                   color: Colors.blue.shade100,
                   legendItemText: "Prediction percentage",
                 )
-
               ],
               primaryXAxis: DateTimeAxis(
                 dateFormat: DateFormat.MMM(),
@@ -341,19 +375,19 @@ class _StockPageState extends State<StockPage> {
                   color: Colors.red.shade100,
                   legendItemText: "Prediction difference",
                 ),
-              LineSeries<StockData, DateTime>(
-              dataSource: chartsTimes[chartTimesIndex],
-              name: "Prediction percentage",
-              xValueMapper: (StockData data, _) => data.date,
-              yValueMapper: (StockData data, _) {
-                return ((data.openingPrice -
-                    data.closingPrice) * 100 / data.openingPrice).
-                abs();
-              },
-              color: Colors.blue.shade100,
-              legendItemText: "Prediction percentage",
-              )
-
+                LineSeries<StockData, DateTime>(
+                  dataSource: chartsTimes[chartTimesIndex],
+                  name: "Prediction percentage",
+                  xValueMapper: (StockData data, _) => data.date,
+                  yValueMapper: (StockData data, _) {
+                    return ((data.openingPrice - data.closingPrice) *
+                            100 /
+                            data.openingPrice)
+                        .abs();
+                  },
+                  color: Colors.blue.shade100,
+                  legendItemText: "Prediction percentage",
+                )
               ],
               primaryXAxis: DateTimeAxis(
                   dateFormat: DateFormat.MMM(),
@@ -370,26 +404,6 @@ class _StockPageState extends State<StockPage> {
       ),
     );
   }
-
-  Widget predictedAndChangePrice() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Row(
-        children: [
-          PredictionsData.getPredictedPrice(widget.stockCode),
-          const Divider(),
-          Expanded(
-            child: PredictionsData.getChangeLastMonth(widget.stockCode, true),
-          ),
-          const Divider(),
-          Expanded(
-            child: PredictionsData.getMonthlyChangeAvg(widget.stockCode, true),
-            ),
-        ],
-      ),
-    );
-  }
-
 
   Widget buttonsDWM() {
     return ButtonBar(

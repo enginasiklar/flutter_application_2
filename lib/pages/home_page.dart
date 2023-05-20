@@ -24,7 +24,7 @@ class HomePage extends StatelessWidget {
         backgroundColor: Colors.amber[40],
         body: TabBarView(children: [
           GaugeRangePage(),
-          PredectionsGridView(),
+          PredictionsGridView(),
         ]),
       ),
     );

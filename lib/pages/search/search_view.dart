@@ -5,8 +5,10 @@ import 'package:flutter_application_2/pages/predict_grid/predict_grid_model.dart
 import 'package:flutter_application_2/pages/search/search_model.dart';
 import 'package:flutter_application_2/pages/stock_page.dart';
 
+import '../../model/main_model.dart';
+
 class SearchViewPage extends StatefulWidget {
-  const SearchViewPage({super.key});
+  const SearchViewPage({Key? key});
 
   @override
   State<SearchViewPage> createState() => _SearchViewPageState();
@@ -16,9 +18,10 @@ class _SearchViewPageState extends State<SearchViewPage> {
   TextEditingController searchTextController = TextEditingController();
 
   List<Stock> _auxStockList = [];
+
   @override
   void initState() {
-    _auxStockList.addAll(Stock.stockList);
+    _auxStockList.addAll(Stock.stockListFromMainData(MainModel.data));
     super.initState();
   }
 
@@ -36,58 +39,60 @@ class _SearchViewPageState extends State<SearchViewPage> {
           },
         ),
       ),
-      body: Column(children: [
-        Expanded(
-          child: ListView.builder(
-            itemCount: _auxStockList.length,
-            itemBuilder: (context, index) {
-              return ListTile(
-                title: Text(_auxStockList[index].ticker),
-                subtitle: Text(_auxStockList[index].name),
-                trailing: SizedBox(
-                  height: 50,
-                  width: 80,
-                  child: FutureBuilder(
-                    future: PredictionsData.getChangedValue(
-                        _auxStockList[index].ticker),
-                    initialData: '#',
-                    builder: (BuildContext context, AsyncSnapshot snapshot) {
-                      if (snapshot.data.toString().contains("#")) {
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              itemCount: _auxStockList.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text(_auxStockList[index].ticker),
+                  subtitle: Text(_auxStockList[index].name),
+                  trailing: SizedBox(
+                    height: 50,
+                    width: 80,
+                    child: FutureBuilder(
+                      future: PredictionsData.getChangedValue(_auxStockList[index].ticker),
+                      initialData: '#',
+                      builder: (BuildContext context, AsyncSnapshot snapshot) {
+                        Color textColor;
+                        if (snapshot.data.toString().contains("#")) {
+                          textColor = PredictGrid.blue;
+                        } else if (snapshot.data.toString().contains("-")) {
+                          textColor = PredictGrid.red;
+                        } else {
+                          textColor = PredictGrid.green;
+                        }
+                        final percentageChange = MainModel.data[_auxStockList[index].ticker]?.todayValue != null &&
+                            MainModel.data[_auxStockList[index].ticker]?.yesterdayValue != null
+                            ? ((MainModel.data[_auxStockList[index].ticker]?.todayValue ?? 0) -
+                            (MainModel.data[_auxStockList[index].ticker]?.yesterdayValue ?? 0)) /
+                            (MainModel.data[_auxStockList[index].ticker]?.yesterdayValue ?? 0) *
+                            100
+                            : 0;
+
                         return Text(
-                          "${snapshot.data}",
-                          style: TextStyle(color: PredictGrid.blue),
+                          '${percentageChange.toStringAsFixed(2)}%',
+                          style: TextStyle(color: textColor, fontSize: 15),
                         );
-                      } else if (snapshot.data.toString().contains("-")) {
-                        return Text(
-                          "${snapshot.data}%",
-                          style: const TextStyle(
-                              color: PredictGrid.red, fontSize: 15),
-                        );
-                      } else {
-                        return Text(
-                          "${snapshot.data}%",
-                          style: const TextStyle(
-                              color: PredictGrid.green, fontSize: 15),
-                        );
-                      }
-                    },
+                      },
+                    ),
                   ),
-                ),
-                onTap: () {
-                  Navigator.of(context)
-                      .push(MaterialPageRoute(builder: (BuildContext context) {
-                    // return const stockPage();
-                    return StockPage(
-                      stockCode: _auxStockList[index].ticker,
-                      stockName: _auxStockList[index].name,
-                    );
-                  }));
-                },
-              );
-            },
-          ),
-        )
-      ]),
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) {
+                      return StockPage(
+                        stockCode: _auxStockList[index].ticker,
+                        stockName: _auxStockList[index].name,
+                      );
+                    }));
+                  },
+                );
+              },
+            ),
+          )
+        ],
+      ),
     );
   }
 }
+

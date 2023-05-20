@@ -1,11 +1,15 @@
 import 'package:intl/intl.dart';
 
+import 'main_model.dart';
+import 'package:intl/intl.dart';
+
 class StockData {
   final DateTime date;
   final double openingPrice;
   final double closingPrice;
   late double lowPrice;
   late double highPrice;
+
 
   StockData({
     required this.date,
@@ -40,6 +44,7 @@ class StockData {
       highPrice: highP,
     );
   }
+
   static List<StockData> getWeekly(List<StockData> daily) {
     //TODO: better algorithm
     List<StockData> myList = [];
@@ -148,23 +153,16 @@ class Stock {
   final String ticker;
 
   Stock(this.ticker, this.name);
-  static final List<Stock> stockList = [
-    Stock('AAPL', 'Apple Inc.'),
-    Stock('AMZN', 'Amazon.com Inc.'),
-    Stock('GOOGL', 'Alphabet Inc.'),
-    Stock('MSFT', 'Microsoft Corporation'),
-    Stock('EBAY', 'Ebay Inc.'),
-    Stock('ADBE', 'Adobe Inc.'),
-    Stock('TSLA', 'Tesla Inc.'),
-    // add more stocks as needed
-  ];
-  static final List<String> stockListShort = [
-    'Apple',
-    'Amazon',
-    'Alphabet',
-    'Microsoft',
-    'Ebay',
-    'Adobe',
-    'Tesla',
-  ];
+
+  static List<Stock> stockListFromMainData(Map<String, MainModel> mainData) {
+    List<Stock> stocks = [];
+    mainData.forEach((key, value) {
+      stocks.add(Stock(key, value.name));
+    });
+    return stocks;
+  }
+
+  static List<Stock> stockList = Stock.stockListFromMainData(MainModel.data);
+  static List<String> stockListShort = stockList.map((stock) => stock.name).toList();
 }
+
