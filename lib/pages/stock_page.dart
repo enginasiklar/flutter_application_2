@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/model/predictions_short_data.dart';
-import 'package:flutter_application_2/notifications/followed_stock_item.dart';
 import 'package:flutter_application_2/notifications/followed_stock_model.dart';
 import 'package:flutter_application_2/pages/stock_data_page.dart';
 import 'package:provider/provider.dart';
@@ -55,30 +54,46 @@ class _StockPageState extends State<StockPage> {
     enablePinching: true,
   );
 
+
   @override
   void initState() {
     super.initState();
     _chartData = PredictionsData.getStockData(widget.stockCode);
   }
 
-  Future<void> addFav() async {
+  var db = FirebaseFirestore.instance;
+  final userID = FirebaseAuth.instance.currentUser?.uid;
 
-    final user = FirebaseAuth.instance.currentUser;
-    final userID = user?.uid;
-    print("mango");
-
-    var db = FirebaseFirestore.instance;
-
-
+  addFavorite() {
     // Add a new document with a generated id.
     final data = {
       "userID": userID,
-      "tickerID": widget.stockCode,    };
-    db.collection("favorites").add(data).then((documentSnapshot) =>
-        print("Added Data with ID: ${documentSnapshot.id}"));
+      "tickerID": widget.stockCode,
+    };
+    db.collection("favorites").add(data);
+  }
 
-    print("jango");
+  Future<void> removeFavorite() async {
 
+    final snapshot = await db
+        .collection("favorites")
+        .where("userID", isEqualTo: userID)
+        .where("tickerID", isEqualTo: widget.stockCode)
+        .get();
+
+    for (final doc in snapshot.docs) {
+      await doc.reference.delete();
+    }
+  }
+
+  Future<bool> checkIfFavorite() async {
+    final snapshot = await db
+        .collection("favorites")
+        .where("userID", isEqualTo: userID)
+        .where("tickerID", isEqualTo: widget.stockCode)
+        .get();
+
+    return snapshot.docs.isNotEmpty;
   }
 
   List<List<StockData>> chartsTimes = [[], [], []];
@@ -102,14 +117,42 @@ class _StockPageState extends State<StockPage> {
             tooltip: "Information",
             icon: const Icon(Icons.info_outline),
           ),
-          IconButton(
-            onPressed: () {
-              addFav();
-              setState(() {}); // Update the UI
+          StreamBuilder<User?>(
+            stream: FirebaseAuth.instance.authStateChanges(),
+            builder: (context, snapshot) {
+              final isLoggedIn = snapshot.hasData;
+              final user = FirebaseAuth.instance.currentUser;
+
+              return isLoggedIn && user != null
+                  ? FutureBuilder<bool>(
+                future: checkIfFavorite(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const CircularProgressIndicator();
+                  } else {
+                    final isFavorite = snapshot.data ?? false;
+
+                    return IconButton(
+                      onPressed: () async {
+                        if (isFavorite) {
+                          await removeFavorite();
+                        } else {
+                          await addFavorite();
+                        }
+
+                        setState(() {});
+                      },
+                      tooltip: "Favorite",
+                      icon: isFavorite
+                          ? const Icon(Icons.star_rounded)
+                          : const Icon(Icons.star_border_rounded),
+                    );
+                  }
+                },
+              )
+                  : const SizedBox
+                  .shrink(); // Hide the button if user is not logged in
             },
-            icon: Icon(
-              Icons.star,
-            ),
           ),
           Switch(
             activeColor: const Color.fromARGB(200, 255, 120, 120),
@@ -163,8 +206,8 @@ class _StockPageState extends State<StockPage> {
                     },
                     icon: const Text(
                       "+",
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold),
                     )),
                 IconButton(
                     onPressed: () {
@@ -172,8 +215,8 @@ class _StockPageState extends State<StockPage> {
                     },
                     icon: const Text(
                       "o",
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold),
                     )),
                 IconButton(
                     onPressed: () {
@@ -181,8 +224,8 @@ class _StockPageState extends State<StockPage> {
                     },
                     icon: const Text(
                       "-",
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold),
                     )),
               ],
             ),
@@ -196,8 +239,8 @@ class _StockPageState extends State<StockPage> {
     return Expanded(
       child: FutureBuilder<List<StockData>>(
         future: _chartData,
-        builder:
-            (BuildContext context, AsyncSnapshot<List<StockData>> snapshot) {
+        builder: (BuildContext context,
+            AsyncSnapshot<List<StockData>> snapshot) {
           if (snapshot.hasData) {
             final List<StockData> chartData = snapshot.data!;
             return SfCartesianChart(
@@ -227,7 +270,7 @@ class _StockPageState extends State<StockPage> {
                   xValueMapper: (StockData data, _) => data.date,
                   yValueMapper: (StockData data, _) {
                     return (data.openingPrice.round() -
-                            data.closingPrice.round())
+                        data.closingPrice.round())
                         .abs();
                   },
                   color: Colors.red.shade100,
@@ -239,8 +282,8 @@ class _StockPageState extends State<StockPage> {
                   xValueMapper: (StockData data, _) => data.date,
                   yValueMapper: (StockData data, _) {
                     return ((data.openingPrice - data.closingPrice) *
-                            100 /
-                            data.openingPrice)
+                        100 /
+                        data.openingPrice)
                         .abs();
                   },
                   color: Colors.blue.shade100,
@@ -287,7 +330,8 @@ class _StockPageState extends State<StockPage> {
                 setState(() {
                   _startDate = pickedDate;
                   startDateController.text =
-                      "${_startDate.year}-${_startDate.month.toString().padLeft(2, '0')}-${_startDate.day.toString().padLeft(2, '0')}";
+                  "${_startDate.year}-${_startDate.month.toString().padLeft(
+                      2, '0')}-${_startDate.day.toString().padLeft(2, '0')}";
                 });
               },
             ),
@@ -309,7 +353,8 @@ class _StockPageState extends State<StockPage> {
                 setState(() {
                   _endDate = pickedDate;
                   endDateController.text =
-                      "${_endDate.year}-${_endDate.month.toString().padLeft(2, '0')}-${_endDate.day.toString().padLeft(2, '0')}";
+                  "${_endDate.year}-${_endDate.month.toString().padLeft(
+                      2, '0')}-${_endDate.day.toString().padLeft(2, '0')}";
                 });
               },
             ),
@@ -320,9 +365,9 @@ class _StockPageState extends State<StockPage> {
             onPressed: () {
               setState(() {
                 _chartData = PredictionsData.getStockDataDates(
-                        widget.stockCode, _startDate, _endDate)
-                    // ApiService().fetchStockDataTimed(
-                    //     widget.stockCode, _startDate, _endDate)
+                    widget.stockCode, _startDate, _endDate)
+                // ApiService().fetchStockDataTimed(
+                //     widget.stockCode, _startDate, _endDate)
                     ;
               });
             },
@@ -336,8 +381,8 @@ class _StockPageState extends State<StockPage> {
     return Expanded(
       child: FutureBuilder<List<StockData>>(
         future: _chartData,
-        builder:
-            (BuildContext context, AsyncSnapshot<List<StockData>> snapshot) {
+        builder: (BuildContext context,
+            AsyncSnapshot<List<StockData>> snapshot) {
           if (snapshot.hasData) {
             List<StockData> chartSampleData = snapshot.data!.map((data) {
               return StockData(
@@ -362,14 +407,14 @@ class _StockPageState extends State<StockPage> {
                     highValueMapper: (StockData sales, _) => sales.highPrice,
                     openValueMapper: (StockData sales, _) => sales.openingPrice,
                     closeValueMapper: (StockData sales, _) =>
-                        sales.closingPrice),
+                    sales.closingPrice),
                 LineSeries<StockData, DateTime>(
                   dataSource: chartsTimes[chartTimesIndex],
                   name: "Prediction difference",
                   xValueMapper: (StockData data, _) => data.date,
                   yValueMapper: (StockData data, _) {
                     return (data.openingPrice.round() -
-                            data.closingPrice.round())
+                        data.closingPrice.round())
                         .abs();
                   },
                   color: Colors.red.shade100,
@@ -381,8 +426,8 @@ class _StockPageState extends State<StockPage> {
                   xValueMapper: (StockData data, _) => data.date,
                   yValueMapper: (StockData data, _) {
                     return ((data.openingPrice - data.closingPrice) *
-                            100 /
-                            data.openingPrice)
+                        100 /
+                        data.openingPrice)
                         .abs();
                   },
                   color: Colors.blue.shade100,
@@ -454,3 +499,5 @@ class _StockPageState extends State<StockPage> {
     );
   }
 }
+
+
