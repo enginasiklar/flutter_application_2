@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/model/predictions_short_data.dart';
-import 'package:flutter_application_2/notifications/followed_stock_model.dart';
 import 'package:flutter_application_2/pages/stock_data_page.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';

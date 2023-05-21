@@ -42,7 +42,7 @@ class _SearchViewPageState extends State<SearchViewPage> {
       body: Column(
         children: [
           Expanded(
-            child: ListView.builder(
+            child: ListView.separated(
               itemCount: _auxStockList.length,
               itemBuilder: (context, index) {
                 return ListTile(
@@ -55,14 +55,6 @@ class _SearchViewPageState extends State<SearchViewPage> {
                       future: PredictionsData.getChangedValue(_auxStockList[index].ticker),
                       initialData: '#',
                       builder: (BuildContext context, AsyncSnapshot snapshot) {
-                        Color textColor;
-                        if (snapshot.data.toString().contains("#")) {
-                          textColor = PredictGrid.blue;
-                        } else if (snapshot.data.toString().contains("-")) {
-                          textColor = PredictGrid.red;
-                        } else {
-                          textColor = PredictGrid.green;
-                        }
                         final percentageChange = MainModel.data[_auxStockList[index].ticker]?.todayValue != null &&
                             MainModel.data[_auxStockList[index].ticker]?.yesterdayValue != null
                             ? ((MainModel.data[_auxStockList[index].ticker]?.todayValue ?? 0) -
@@ -70,6 +62,8 @@ class _SearchViewPageState extends State<SearchViewPage> {
                             (MainModel.data[_auxStockList[index].ticker]?.yesterdayValue ?? 0) *
                             100
                             : 0;
+
+                        Color textColor = percentageChange < 0 ? Colors.red : Colors.green;
 
                         return Text(
                           '${percentageChange.toStringAsFixed(2)}%',
@@ -88,8 +82,9 @@ class _SearchViewPageState extends State<SearchViewPage> {
                   },
                 );
               },
+              separatorBuilder: (context, index) => Divider(), // Add a separating line
             ),
-          )
+          ),
         ],
       ),
     );

@@ -10,35 +10,56 @@ class PredictionsGridView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-        maxCrossAxisExtent: 150,
-      ),
-      itemCount: data.length,
-      itemBuilder: (BuildContext context, int index) {
-        return GestureDetector(
-          onTap: () {
-            Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) {
-              return StockPage(
-                stockCode: data[index].stock.ticker,
-                stockName: data[index].stock.name,
-              );
-            }));
-          },
-          child: Card(
-            margin: const EdgeInsets.all(5),
-            color: data[index].color,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(data[index].name),
-                Text('${data[index].percentage.toStringAsFixed(2)}%'),
-              ],
+    return Column(
+      children: [
+        SizedBox(height: 20), // Add space at the top
+        Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: Text(
+            "Most Popular Stocks",
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
             ),
           ),
-        );
-      },
+        ),
+        const Divider(), // Add a separating line
+        Expanded(
+          child: GridView.builder(
+            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: 150,
+            ),
+            itemCount: data.length,
+            itemBuilder: (BuildContext context, int index) {
+              return GestureDetector(
+                onTap: () {
+                  Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) {
+                    return StockPage(
+                      stockCode: data[index].stock.ticker,
+                      stockName: data[index].stock.name,
+                    );
+                  }));
+                },
+                child: Card(
+                  margin: const EdgeInsets.all(5),
+                  color: data[index].color,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(data[index].name),
+                      Text(
+                        '${data[index].percentage.toStringAsFixed(2)}%',
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 }
+
 

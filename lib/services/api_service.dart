@@ -161,5 +161,73 @@ class ApiService {
     }
   }
 
+  static void sendNotificationData(String? userID, String selectedButton, String stockName) async {
+    final Map<String, String> requestData = {
+      "userID": userID!,
+      "percentage": selectedButton,
+      "tickerID": stockName,
+    };
+
+    final response = await http.post(
+      Uri.parse("${ApiConstants.mainUrl}/api/users/stock/notifications/"),
+      headers: {
+        'Authorization': 'Basic ${base64Encode(utf8.encode('uysm:pecnet'))}',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(requestData),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to send notification data');
+    }
+  }
+
+  static void sendUserData(String? userID, String? fcmToken) async {
+    final Map<String, String> requestData = {
+      "userID": userID!,
+      "fcmToken": fcmToken!,
+    };
+
+    final response = await http.post(
+      Uri.parse("${ApiConstants.mainUrl}/api/users/stock/notifications/"),
+      headers: {
+        'Authorization': 'Basic ${base64Encode(utf8.encode('uysm:pecnet'))}',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(requestData),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to send user data');
+    }
+  }
+
+  static Future<void> deleteNotification(String? userID, String stockCode, String percentage) async {
+    final Map<String, String> requestData = {
+      "userID": userID!,
+      "stockCode": stockCode,
+      "percentage": percentage,
+    };
+
+    final response = await http.delete(
+      Uri.parse("${ApiConstants.mainUrl}/api/users/stock/notifications/"),
+      headers: {
+        'Authorization': 'Basic ${base64Encode(utf8.encode('uysm:pecnet'))}',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(requestData),
+    );
+    if (response.statusCode != 200) {
+      throw Exception('Failed to delete notification');
+    }
+  }
+
+
+
+
+
+
+
+
 
 }
