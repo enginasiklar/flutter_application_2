@@ -18,26 +18,36 @@ class StockDataPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(stockCode),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Today Value: ${todayValue.toStringAsFixed(2)}',
-              style: TextStyle(fontSize: 16),
+        title: Text(stockCode),),
+      body: Padding(padding: const EdgeInsets.all(16), child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Card(child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Text(
+                  'Today Value: ${todayValue.toStringAsFixed(2)}',
+                  style: TextStyle(fontSize: 16),
+                ),
+              ),
             ),
             const SizedBox(height: 8),
-            Text(
-              'Percentage Change (Today vs Yesterday): ${((todayValue - yesterdayValue) / yesterdayValue * 100).toStringAsFixed(2)}%',
-              style: TextStyle(fontSize: 16),
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Text(
+                  'Percentage Change (Today vs Yesterday): ${((todayValue - yesterdayValue) / yesterdayValue * 100).toStringAsFixed(2)}%',
+                  style: TextStyle(fontSize: 16),
+                ),
+              ),
             ),
             const SizedBox(height: 8),
-            Text(
-              'Percentage Change (Last Month Prediction vs Last Month Value): ${((0 - lastMonthValue) / lastMonthValue * 100).toStringAsFixed(2)}%',
-              style: TextStyle(fontSize: 16),
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Text(
+                  'Percentage Change (Last Month Prediction vs Last Month Value): ${((0 - lastMonthValue) / lastMonthValue * 100).toStringAsFixed(2)}%',
+                  style: TextStyle(fontSize: 16),
+                ),
+              ),
             ),
           ],
         ),

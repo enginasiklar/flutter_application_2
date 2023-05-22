@@ -2,20 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_2/charts/gauge_range.dart';
 import 'package:flutter_application_2/services/api_service.dart';
 import 'package:flutter_application_2/model/gauge_model.dart';
+
 class GaugeRangePage extends StatelessWidget {
   GaugeRangePage({Key? key}) : super(key: key);
-
   final Future<Sentiment> futureSentiment = ApiService().getSentiment();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
         children: [
-          SizedBox(height: 20), // Add space at the top
-          Card(
+          const SizedBox(height: 20), // Add space at the top
+          const Card(
             child: Padding(
-              padding: const EdgeInsets.all(15.0),
+              padding: EdgeInsets.all(15.0),
               child: Text(
                 "General Market Sentiment",
                 style: TextStyle(
@@ -38,7 +37,6 @@ class GaugeRangePage extends StatelessWidget {
                     } else if (snapshot.hasError) {
                       return Text('${snapshot.error}');
                     }
-                    // By default, show a loading spinner.
                     return const Center(child: CircularProgressIndicator());
                   },
                 ),
@@ -50,4 +48,3 @@ class GaugeRangePage extends StatelessWidget {
     );
   }
 }
-

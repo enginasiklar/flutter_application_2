@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/pages/gauge_range_page.dart';
-import 'package:flutter_application_2/pages/predict_grid/predections_grid_view.dart';
+import 'package:flutter_application_2/pages/stocks_grid/stocks_grid_view.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -24,7 +24,7 @@ class HomePage extends StatelessWidget {
         backgroundColor: Colors.amber[40],
         body: TabBarView(children: [
           GaugeRangePage(),
-          PredictionsGridView(),
+          StocksGridView(),
         ]),
       ),
     );

@@ -5,7 +5,6 @@ import 'package:syncfusion_flutter_gauges/gauges.dart';
 class GaugeRangeWidget extends StatelessWidget {
   final SentData points;
   const GaugeRangeWidget(this.points, {super.key});
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,7 +18,7 @@ class GaugeRangeWidget extends StatelessWidget {
         NeedlePointer(value: double.parse(points.value))
       ], annotations: <GaugeAnnotation>[
         GaugeAnnotation(
-            widget: Text("${points.value} ${points.valueClassification}",
+            widget: Text("${points.valueClassification} (${points.value})",
                 style:
                     const TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
             angle: 90,

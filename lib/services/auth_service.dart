@@ -10,33 +10,24 @@ class AuthService {
     final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
 
     if (googleUser == null) {
-      return null;
-    }
+      return null;    }
 
     final GoogleSignInAuthentication googleAuth =
-    await googleUser.authentication;
-
+        await googleUser.authentication;
     final AuthCredential credential = GoogleAuthProvider.credential(
       accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
+      idToken: googleAuth.idToken,    );
 
-    final UserCredential userCredential =
-    await _auth.signInWithCredential(credential);
-    return userCredential;
-  }
+    final UserCredential userCredential = await _auth.signInWithCredential(credential);
+    return userCredential;}
 
-  // sign out
   Future<void> signOut() async {
-    await _auth.signOut();
-  }
+    await _auth.signOut();}
 
   // get the current user
   User? getCurrentUser() {
     final User? user = _auth.currentUser;
-    return user;
-  }
+    return user;}
 
   // listen for authentication state changes
-  Stream<User?> get authStateChanges => _auth.authStateChanges();
-}
+  Stream<User?> get authStateChanges => _auth.authStateChanges();}
