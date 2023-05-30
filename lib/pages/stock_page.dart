@@ -46,7 +46,12 @@ class _StockPageState extends State<StockPage> {
   TextEditingController startDateController = TextEditingController();
   TextEditingController endDateController = TextEditingController();
   bool _showLineChart = false;
-  ZoomPanBehavior zoomPanBehavior = ZoomPanBehavior(
+  ZoomPanBehavior zoomPanBehavior1 = ZoomPanBehavior(
+    enableDoubleTapZooming: true,
+    enablePanning: true,
+    enablePinching: true,
+  );
+  ZoomPanBehavior zoomPanBehavior2 = ZoomPanBehavior(
     enableDoubleTapZooming: true,
     enablePanning: true,
     enablePinching: true,
@@ -179,16 +184,11 @@ class _StockPageState extends State<StockPage> {
           flex: 1,
           child: datesSetBar(),
         ),
-        const SizedBox(height: 20),
         Expanded(
           flex: 6,
-          child: Stack(
-            children: [
-              _showLineChart ? _buildLineChart() : _buildCandleChart(),
-            ],
-          ),
+          child: _showLineChart ? _buildLineChart() : _buildCandleChart(),
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 10),
         Expanded(
           flex: 1,
           child: Row(
@@ -229,249 +229,269 @@ class _StockPageState extends State<StockPage> {
   }
 
   Widget _buildCandleChart() {
-    return Expanded(
-      child: FutureBuilder<List<StockData>>(
-        future: _chartData,
-        builder:
-            (BuildContext context, AsyncSnapshot<List<StockData>> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasData && snapshot.data != null) {
-            List<StockData> chartSampleData =
-                snapshot.data!.where((data) => data != null).map((data) {
-              return StockData(
-                date: data.date,
-                openingPrice: data.openingPrice,
-                closingPrice: data.closingPrice,
-                predictedPrice: data.predictedPrice,
-              );
-            }).toList();
-            chartsTimes[0] = chartSampleData;
-            chartsTimes[1] = StockData.getWeekly(chartSampleData);
-            chartsTimes[2] = StockData.getMonthly(chartsTimes[1]);
-            setYAxesLimits();
-            return Column(
-              children: [
-                Expanded(
-                  flex: 7,
-                  child: SfCartesianChart(
-                    zoomPanBehavior: zoomPanBehavior,
-                    trackballBehavior: _trackballBehavior1,
-                    /*onTooltipRender: (TooltipArgs args) {
-                      List<dynamic>? chartdata = args.dataPoints;
-                      StockData dataPoint = chartdata![args.pointIndex];
-                
-                      // Format date for the tooltip
-                      String formattedDate = DateFormat('d MMM yyyy').format(dataPoint.date);
-                
-                      // Calculate prediction difference and percentage
-                      double predictionDiff = (dataPoint.openingPrice.round() - dataPoint.closingPrice.round()).abs() as double;
-                      double predictionPercentage = ((dataPoint.openingPrice - dataPoint.closingPrice) * 100 / dataPoint.openingPrice).abs();
-                
-                      // Set the header to the formatted date
-                      args.header = formattedDate;
-                
-                      // Set the text to include prediction and actual value change and their percentages
-                      args.text = 'Prediction Diff: ${predictionDiff.toStringAsFixed(2)}\n'
-                          'Prediction Percentage: ${predictionPercentage.toStringAsFixed(2)}%\n'
-                          'Predicted Price: ${dataPoint.predictedPrice.toStringAsFixed(2)}\n'
-                          'Opening Price: ${dataPoint.openingPrice.toStringAsFixed(2)}\n'
-                          'Closing Price: ${dataPoint.closingPrice.toStringAsFixed(2)}';
-                    }, */
-                    series: [
-                      CandleSeries<StockData, DateTime>(
-                        dataSource: chartsTimes[chartTimesIndex],
-                        name: widget.stockCode,
-                        xValueMapper: (StockData sales, _) => sales.date,
-                        lowValueMapper: (StockData sales, _) =>
-                            sales.closingPrice,
-                        highValueMapper: (StockData sales, _) =>
-                            sales.openingPrice,
-                        openValueMapper: (StockData sales, _) =>
-                            sales.openingPrice,
-                        closeValueMapper: (StockData sales, _) =>
-                            sales.closingPrice,
-                      ),
-                      // LineSeries<StockData, DateTime>(
-                      //   dataSource: chartsTimes[chartTimesIndex],
-                      //   name: "Prediction difference",
-                      //   xValueMapper: (StockData data, _) => data.date,
-                      //   yValueMapper: (StockData data, _) {
-                      //     return (data.openingPrice.round() -
-                      //             data.closingPrice.round())
-                      //         .abs();
-                      //   },
-                      //   color: Colors.red.shade100,
-                      //   legendItemText: "Prediction difference",
-                      // ),
-                      // LineSeries<StockData, DateTime>(
-                      //   dataSource: chartsTimes[chartTimesIndex],
-                      //   name: "Prediction percentage",
-                      //   xValueMapper: (StockData data, _) => data.date,
-                      //   yValueMapper: (StockData data, _) {
-                      //     return ((data.openingPrice - data.closingPrice) *
-                      //             100 /
-                      //             data.openingPrice)
-                      //         .abs();
-                      //   },
-                      //   color: Colors.blue.shade100,
-                      //   legendItemText: "Prediction percentage",
-                      // ),
-                      LineSeries<StockData, DateTime>(
-                        dataSource: chartsTimes[chartTimesIndex],
-                        name: "Predicted Price",
-                        xValueMapper: (StockData data, _) => data.date,
-                        yValueMapper: (StockData data, _) =>
-                            data.predictedPrice ?? 0,
-                        color: Colors.green.shade100,
-                        legendItemText: "Predicted Price",
-                      ),
-                    ],
-                    primaryXAxis: DateTimeAxis(
-                      dateFormat: DateFormat('MMM dd, yyyy'),
-                      majorGridLines: const MajorGridLines(width: 0),
-                    ),
-                    primaryYAxis: NumericAxis(
-                      maximum: maxYAxes,
-                      minimum: minYAxes,
-                      numberFormat:
-                          NumberFormat.simpleCurrency(decimalDigits: 0),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  flex: 2,
-                  child: SfCartesianChart(
-                    zoomPanBehavior: zoomPanBehavior,
-                    trackballBehavior: _trackballBehavior2,
-                    series: [
-                      LineSeries<StockData, DateTime>(
-                        dataSource: chartsTimes[chartTimesIndex],
-                        name: "Prediction difference",
-                        xValueMapper: (StockData data, _) => data.date,
-                        yValueMapper: (StockData data, _) {
-                          return (data.openingPrice.round() -
-                                  data.closingPrice.round())
-                              .abs();
-                        },
-                        color: Colors.red.shade100,
-                        legendItemText: "Prediction difference",
-                      ),
-                      LineSeries<StockData, DateTime>(
-                        dataSource: chartsTimes[chartTimesIndex],
-                        name: "Prediction percentage",
-                        xValueMapper: (StockData data, _) => data.date,
-                        yValueMapper: (StockData data, _) {
-                          return ((data.openingPrice - data.closingPrice) *
-                                  100 /
-                                  data.openingPrice)
-                              .abs();
-                        },
-                        color: Colors.blue.shade100,
-                        legendItemText: "Prediction percentage",
-                      ),
-                    ],
-                    primaryXAxis: DateTimeAxis(
-                      dateFormat: DateFormat('MMM dd, yyyy'),
-                      majorGridLines: const MajorGridLines(width: 0),
-                    ),
-                    primaryYAxis: NumericAxis(
-                      numberFormat:
-                          NumberFormat.simpleCurrency(decimalDigits: 0),
-                    ),
-                  ),
-                ),
-              ],
+    return FutureBuilder<List<StockData>>(
+      future: _chartData,
+      builder: (BuildContext context, AsyncSnapshot<List<StockData>> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasData && snapshot.data != null) {
+          List<StockData> chartSampleData =
+              snapshot.data!.where((data) => data != null).map((data) {
+            return StockData(
+              date: data.date,
+              openingPrice: data.openingPrice,
+              closingPrice: data.closingPrice,
+              predictedPrice: data.predictedPrice,
             );
-          } else if (snapshot.hasError) {
-            return Text("${snapshot.error}");
-          } else {
-            Future.delayed(const Duration(seconds: 1), () {
-              setState(() {});
-            });
-            return const Center(child: CircularProgressIndicator());
-          }
-        },
-      ),
+          }).toList();
+          chartsTimes[0] = chartSampleData;
+          chartsTimes[1] = StockData.getWeekly(chartSampleData);
+          chartsTimes[2] = StockData.getMonthly(chartsTimes[1]);
+          setYAxesLimits();
+          return Column(
+            children: [
+              Expanded(
+                flex: 7,
+                child: SfCartesianChart(
+                  legend: Legend(isVisible: true, position: LegendPosition.top),
+                  zoomPanBehavior: zoomPanBehavior1,
+                  trackballBehavior: _trackballBehavior1,
+                  /*onTooltipRender: (TooltipArgs args) {
+                    List<dynamic>? chartdata = args.dataPoints;
+                    StockData dataPoint = chartdata![args.pointIndex];
+              
+                    // Format date for the tooltip
+                    String formattedDate = DateFormat('d MMM yyyy').format(dataPoint.date);
+              
+                    // Calculate prediction difference and percentage
+                    double predictionDiff = (dataPoint.openingPrice.round() - dataPoint.closingPrice.round()).abs() as double;
+                    double predictionPercentage = ((dataPoint.openingPrice - dataPoint.closingPrice) * 100 / dataPoint.openingPrice).abs();
+              
+                    // Set the header to the formatted date
+                    args.header = formattedDate;
+              
+                    // Set the text to include prediction and actual value change and their percentages
+                    args.text = 'Prediction Diff: ${predictionDiff.toStringAsFixed(2)}\n'
+                        'Prediction Percentage: ${predictionPercentage.toStringAsFixed(2)}%\n'
+                        'Predicted Price: ${dataPoint.predictedPrice.toStringAsFixed(2)}\n'
+                        'Opening Price: ${dataPoint.openingPrice.toStringAsFixed(2)}\n'
+                        'Closing Price: ${dataPoint.closingPrice.toStringAsFixed(2)}';
+                  }, */
+                  series: [
+                    CandleSeries<StockData, DateTime>(
+                      dataSource: chartsTimes[chartTimesIndex],
+                      name: widget.stockCode,
+                      xValueMapper: (StockData sales, _) => sales.date,
+                      lowValueMapper: (StockData sales, _) =>
+                          sales.closingPrice,
+                      highValueMapper: (StockData sales, _) =>
+                          sales.openingPrice,
+                      openValueMapper: (StockData sales, _) =>
+                          sales.openingPrice,
+                      closeValueMapper: (StockData sales, _) =>
+                          sales.closingPrice,
+                    ),
+                    // LineSeries<StockData, DateTime>(
+                    //   dataSource: chartsTimes[chartTimesIndex],
+                    //   name: "Prediction difference",
+                    //   xValueMapper: (StockData data, _) => data.date,
+                    //   yValueMapper: (StockData data, _) {
+                    //     return (data.openingPrice.round() -
+                    //             data.closingPrice.round())
+                    //         .abs();
+                    //   },
+                    //   color: Colors.red.shade100,
+                    //   legendItemText: "Prediction difference",
+                    // ),
+                    // LineSeries<StockData, DateTime>(
+                    //   dataSource: chartsTimes[chartTimesIndex],
+                    //   name: "Prediction percentage",
+                    //   xValueMapper: (StockData data, _) => data.date,
+                    //   yValueMapper: (StockData data, _) {
+                    //     return ((data.openingPrice - data.closingPrice) *
+                    //             100 /
+                    //             data.openingPrice)
+                    //         .abs();
+                    //   },
+                    //   color: Colors.blue.shade100,
+                    //   legendItemText: "Prediction percentage",
+                    // ),
+                    LineSeries<StockData, DateTime>(
+                      dataSource: chartsTimes[chartTimesIndex],
+                      name: "Predicted Price",
+                      xValueMapper: (StockData data, _) => data.date,
+                      yValueMapper: (StockData data, _) =>
+                          data.predictedPrice ?? 0,
+                      color: Colors.green.shade100,
+                      legendItemText: "Predicted Price",
+                    ),
+                  ],
+                  primaryXAxis: DateTimeAxis(
+                    dateFormat: DateFormat('MMM dd, yyyy'),
+                    majorGridLines: const MajorGridLines(width: 0),
+                  ),
+                  primaryYAxis: NumericAxis(
+                    maximum: maxYAxes,
+                    minimum: minYAxes,
+                    numberFormat: NumberFormat.simpleCurrency(decimalDigits: 0),
+                  ),
+                ),
+              ),
+              Expanded(
+                flex: 2,
+                child: SfCartesianChart(
+                  legend: Legend(isVisible: true, position: LegendPosition.top),
+                  zoomPanBehavior: zoomPanBehavior2,
+                  trackballBehavior: _trackballBehavior2,
+                  series: [
+                    LineSeries<StockData, DateTime>(
+                      dataSource: chartsTimes[chartTimesIndex],
+                      name: "Prediction difference",
+                      xValueMapper: (StockData data, _) => data.date,
+                      yValueMapper: (StockData data, _) {
+                        return (data.openingPrice.round() -
+                                data.closingPrice.round())
+                            .abs();
+                      },
+                      color: Colors.red.shade100,
+                      legendItemText: "Prediction difference",
+                    ),
+                    LineSeries<StockData, DateTime>(
+                      dataSource: chartsTimes[chartTimesIndex],
+                      name: "Prediction percentage",
+                      xValueMapper: (StockData data, _) => data.date,
+                      yValueMapper: (StockData data, _) {
+                        return ((data.openingPrice - data.closingPrice) *
+                                100 /
+                                data.openingPrice)
+                            .abs();
+                      },
+                      color: Colors.blue.shade100,
+                      legendItemText: "Prediction percentage",
+                    ),
+                  ],
+                  primaryXAxis: DateTimeAxis(
+                    dateFormat: DateFormat('MMM dd, yyyy'),
+                    majorGridLines: const MajorGridLines(width: 0),
+                  ),
+                  primaryYAxis: NumericAxis(
+                    numberFormat: NumberFormat.simpleCurrency(decimalDigits: 0),
+                  ),
+                ),
+              ),
+            ],
+          );
+        } else if (snapshot.hasError) {
+          return Text("${snapshot.error}");
+        } else {
+          Future.delayed(const Duration(seconds: 1), () {
+            setState(() {});
+          });
+          return const Center(child: CircularProgressIndicator());
+        }
+      },
     );
   }
 
   Widget _buildLineChart() {
-    return Expanded(
-      child: FutureBuilder<List<StockData>>(
-        future: _chartData,
-        builder:
-            (BuildContext context, AsyncSnapshot<List<StockData>> snapshot) {
-          if (snapshot.hasData) {
-            final List<StockData> chartData = snapshot.data!;
-            return SfCartesianChart(
-              legend: Legend(isVisible: true),
-              zoomPanBehavior: zoomPanBehavior,
-              trackballBehavior: _trackballBehavior1,
-              series: <LineSeries>[
-                LineSeries<StockData, DateTime>(
-                  dataSource: chartData,
-                  name: "Predicted Price",
-                  xValueMapper: (StockData data, _) => data.date,
-                  yValueMapper: (StockData data, _) => data.closingPrice,
-                  color: Colors.red.shade200,
-                  legendItemText: "Predicted Price",
+    return FutureBuilder<List<StockData>>(
+      future: _chartData,
+      builder: (BuildContext context, AsyncSnapshot<List<StockData>> snapshot) {
+        if (snapshot.hasData) {
+          final List<StockData> chartData = snapshot.data!;
+          return Column(
+            children: [
+              Expanded(
+                flex: 7,
+                child: SfCartesianChart(
+                  legend: Legend(isVisible: true, position: LegendPosition.top),
+                  zoomPanBehavior: zoomPanBehavior1,
+                  trackballBehavior: _trackballBehavior1,
+                  series: <LineSeries>[
+                    LineSeries<StockData, DateTime>(
+                      dataSource: chartData,
+                      name: widget.stockCode,
+                      xValueMapper: (StockData data, _) => data.date,
+                      yValueMapper: (StockData data, _) => data.openingPrice,
+                      color: Colors.green,
+                      legendItemText: widget.stockCode,
+                    ),
+                    LineSeries<StockData, DateTime>(
+                      dataSource: chartData,
+                      name: "Predicted Price",
+                      xValueMapper: (StockData data, _) => data.date,
+                      yValueMapper: (StockData data, _) => data.closingPrice,
+                      color: Colors.red.shade200,
+                      legendItemText: "Predicted Price",
+                    ),
+                  ],
+                  primaryXAxis: DateTimeAxis(
+                    dateFormat: DateFormat.MMM(),
+                    majorGridLines: const MajorGridLines(width: 0),
+                  ),
+                  primaryYAxis: NumericAxis(
+                    maximum: maxYAxes,
+                    minimum: minYAxes,
+                    numberFormat: NumberFormat.simpleCurrency(decimalDigits: 0),
+                  ),
                 ),
-                LineSeries<StockData, DateTime>(
-                  dataSource: chartData,
-                  name: "Real Price",
-                  xValueMapper: (StockData data, _) => data.date,
-                  yValueMapper: (StockData data, _) => data.openingPrice,
-                  color: Colors.green,
-                  legendItemText: "Real Price",
-                ),
-                LineSeries<StockData, DateTime>(
-                  dataSource: chartData,
-                  name: "Prediction difference",
-                  xValueMapper: (StockData data, _) => data.date,
-                  yValueMapper: (StockData data, _) {
-                    return (data.openingPrice.round() -
-                            data.closingPrice.round())
-                        .abs();
-                  },
-                  color: Colors.red.shade100,
-                  legendItemText: "Prediction difference",
-                ),
-                LineSeries<StockData, DateTime>(
-                  dataSource: chartData,
-                  name: "Prediction percentage",
-                  xValueMapper: (StockData data, _) => data.date,
-                  yValueMapper: (StockData data, _) {
-                    return ((data.openingPrice - data.closingPrice) *
-                            100 /
-                            data.openingPrice)
-                        .abs();
-                  },
-                  color: Colors.blue.shade100,
-                  legendItemText: "Prediction percentage",
-                )
-              ],
-              primaryXAxis: DateTimeAxis(
-                dateFormat: DateFormat.MMM(),
-                majorGridLines: const MajorGridLines(width: 0),
               ),
-              primaryYAxis: NumericAxis(
-                numberFormat: NumberFormat.simpleCurrency(decimalDigits: 0),
+              Expanded(
+                flex: 2,
+                child: SfCartesianChart(
+                  legend: Legend(isVisible: true, position: LegendPosition.top),
+                  zoomPanBehavior: zoomPanBehavior1,
+                  trackballBehavior: _trackballBehavior1,
+                  series: <LineSeries>[
+                    LineSeries<StockData, DateTime>(
+                      dataSource: chartData,
+                      name: "Prediction difference",
+                      xValueMapper: (StockData data, _) => data.date,
+                      yValueMapper: (StockData data, _) {
+                        return (data.openingPrice.round() -
+                                data.closingPrice.round())
+                            .abs();
+                      },
+                      color: Colors.red.shade100,
+                      legendItemText: "Prediction difference",
+                    ),
+                    LineSeries<StockData, DateTime>(
+                      dataSource: chartData,
+                      name: "Prediction percentage",
+                      xValueMapper: (StockData data, _) => data.date,
+                      yValueMapper: (StockData data, _) {
+                        return ((data.openingPrice - data.closingPrice) *
+                                100 /
+                                data.openingPrice)
+                            .abs();
+                      },
+                      color: Colors.blue.shade100,
+                      legendItemText: "Prediction percentage",
+                    )
+                  ],
+                  primaryXAxis: DateTimeAxis(
+                    dateFormat: DateFormat.MMM(),
+                    majorGridLines: const MajorGridLines(width: 0),
+                  ),
+                  primaryYAxis: NumericAxis(
+                    numberFormat: NumberFormat.simpleCurrency(decimalDigits: 0),
+                  ),
+                ),
               ),
-            );
-          } else if (snapshot.hasError) {
-            return Text('${snapshot.error}');
-          } else {
-            return const Center(child: CircularProgressIndicator());
-          }
-        },
-      ),
+            ],
+          );
+        } else if (snapshot.hasError) {
+          return Text('${snapshot.error}');
+        } else {
+          return const Center(child: CircularProgressIndicator());
+        }
+      },
     );
   }
 
   Widget datesSetBar() {
     return Container(
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Row(
         children: [
           Expanded(
@@ -538,7 +558,8 @@ class _StockPageState extends State<StockPage> {
       children: [
         IconButton(
           onPressed: () {
-            zoomPanBehavior.zoomIn();
+            zoomPanBehavior1.zoomIn();
+            zoomPanBehavior2.zoomIn();
           },
           icon: const Text(
             "+",
@@ -547,7 +568,8 @@ class _StockPageState extends State<StockPage> {
         ),
         IconButton(
           onPressed: () {
-            zoomPanBehavior.reset();
+            zoomPanBehavior1.reset();
+            zoomPanBehavior2.reset();
           },
           icon: const Text(
             "o",
@@ -556,7 +578,8 @@ class _StockPageState extends State<StockPage> {
         ),
         IconButton(
           onPressed: () {
-            zoomPanBehavior.zoomOut();
+            zoomPanBehavior1.zoomOut();
+            zoomPanBehavior2.zoomOut();
           },
           icon: const Text(
             "-",
