@@ -10,11 +10,7 @@ class PredictionsData {
 
   // returns stockData using only the code
   static Future<List<StockData>> getStockData(String stockCode) async {
-    if (!stocksData.containsKey(stockCode)) {
-      stocksData[stockCode] = await ApiService().fetchStockData(stockCode);
-      return stocksData[stocksData]!.toList();
-    }
-    return stocksData[stockCode]!.toList();
+    return await ApiService().fetchStockData(stockCode);
   }
 
 // force update data for a certain stock
@@ -23,7 +19,8 @@ class PredictionsData {
   }
 
   // returns stockData using code and dates
-  static Future<List<StockData>> getStockDataDates(String stockCode, DateTime startDate, DateTime endDate) async {
+  static Future<List<StockData>> getStockDataDates(
+      String stockCode, DateTime startDate, DateTime endDate) async {
     if (stocksData.containsKey(stockCode)) {
       // sould be negative if the startDate already exists
       int startDiff =
@@ -46,7 +43,10 @@ class PredictionsData {
         int endIndex = stocksData[stockCode]!
             .indexWhere((element) => element.date == endDate);
         //TODO: find a better way to set the data if index does not fit
-        if (startIndex > 0 && endIndex < stocksData[stockCode]!.length && endIndex > 0 && startIndex < stocksData[stockCode]!.length) {
+        if (startIndex > 0 &&
+            endIndex < stocksData[stockCode]!.length &&
+            endIndex > 0 &&
+            startIndex < stocksData[stockCode]!.length) {
           return stocksData[stockCode]!.sublist(startIndex, endIndex);
         }
         return stocksData[stockCode]!.toList();
@@ -64,7 +64,8 @@ class PredictionsData {
   }
 
 // private function to add stockData to a stock using dates
-  static _addStockDataDates(String stockCode, DateTime startDate, DateTime endDate) async {
+  static _addStockDataDates(
+      String stockCode, DateTime startDate, DateTime endDate) async {
     if (stocksData.containsKey(stockCode)) {
       // sould be negative if the startDate already exists
       int startDiff =
@@ -166,10 +167,15 @@ class PredictionsData {
         if (snapshot.hasData) {
           double sumPercentageChange = 0;
           for (int i = 0; i < snapshot.data!.length; i++) {
-            double percentageChange = (snapshot.data![i].closingPrice - snapshot.data![i].openingPrice).abs() * 100 / snapshot.data![i].openingPrice;
+            double percentageChange = (snapshot.data![i].closingPrice -
+                        snapshot.data![i].openingPrice)
+                    .abs() *
+                100 /
+                snapshot.data![i].openingPrice;
             sumPercentageChange += percentageChange;
           }
-          double avgPercentageChange = sumPercentageChange / snapshot.data!.length;
+          double avgPercentageChange =
+              sumPercentageChange / snapshot.data!.length;
 
           if (setTextStyle) {
             return Text(
@@ -195,13 +201,14 @@ class PredictionsData {
   static Widget getPredictedPrice(String stockCode) {
     late Future<List<StockData>> predictedPrice;
     DateTime now = DateTime.now()
-    /*.copyWith(
+        /*.copyWith(
       hour: 0,
       minute: 0,
       second: 0,
       millisecond: 0,
       microsecond: 0,
-    )*/;
+    )*/
+        ;
     DateTime yesterday = now.subtract(const Duration(days: 1));
     predictedPrice = getStockDataDates(stockCode, yesterday, now);
     return Expanded(
