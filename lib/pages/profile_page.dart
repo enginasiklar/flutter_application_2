@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+//TODO: add italian
 class ProfilePage extends StatelessWidget {
   const ProfilePage({Key? key, required this.user}) : super(key: key);
 

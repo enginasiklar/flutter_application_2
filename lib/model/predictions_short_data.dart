@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/model/stock_model.dart';
 import 'package:flutter_application_2/services/api_service.dart';
@@ -137,7 +138,8 @@ class PredictionsData {
               (yesterdayPrice - lastMonthPrice) * 100 / lastMonthPrice;
           if (setTextStyle) {
             return Text(
-              'Change from Last Month: ${percentageChange.toStringAsFixed(2)}%',
+              tr("predictions.changeFromM",
+                  args: [percentageChange.toStringAsFixed(2)]),
               style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -148,7 +150,7 @@ class PredictionsData {
             '${percentageChange.toStringAsFixed(2)}%',
           );
         } else if (snapshot.hasError) {
-          return const Text("data not found");
+          return Text(tr("predictions.noData"));
         } else {
           return const Center(child: CircularProgressIndicator());
         }
@@ -179,7 +181,8 @@ class PredictionsData {
 
           if (setTextStyle) {
             return Text(
-              'Monthly Average Prediction Difference: ${avgPercentageChange.toStringAsFixed(2)}%',
+              tr("predictions.monthAvrgDiff",
+                  args: [avgPercentageChange.toStringAsFixed(2)]),
               style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -190,7 +193,7 @@ class PredictionsData {
             '${avgPercentageChange.toStringAsFixed(2)}%',
           );
         } else if (snapshot.hasError) {
-          return const Text("data not found");
+          return Text(tr("predictions.noData"));
         } else {
           return const Center(child: CircularProgressIndicator());
         }
@@ -222,7 +225,7 @@ class PredictionsData {
             // Update the mostRecentPrice variable
             var mostRecentPrice = closingPrice.toStringAsFixed(2);
             return Text(
-              'Predicted Price: $mostRecentPrice',
+              tr("predictions.predictedPrice", args: [mostRecentPrice]),
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             );
           } else if (snapshot.hasError) {
@@ -276,13 +279,14 @@ class PredictionsData {
             return Row(
               children: [
                 Text(
-                  'Abs Difference: $difference',
+                  tr("predictions.absDiff", args: [difference.toString()]),
                   style: const TextStyle(
                       fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 const Divider(),
                 Text(
-                  'Percentage Difference: ${percentageChange.toStringAsFixed(2)}%',
+                  tr("predictions.percentDiff",
+                      args: [percentageChange.toStringAsFixed(2)]),
                   style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../model/main_model.dart';
 
+//TODO: add italian
 class StockDataPage extends StatelessWidget {
   final String stockCode;
 
@@ -10,7 +11,8 @@ class StockDataPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final mainModel = MainModel.data.values.firstWhere((model) => model.name == stockCode);
+    final mainModel =
+        MainModel.data.values.firstWhere((model) => model.name == stockCode);
     final double todayValue = mainModel.todayValue;
     final double yesterdayValue = mainModel.yesterdayValue;
     final double? lastMonthPred = mainModel.lastMonthPred;
@@ -18,10 +20,15 @@ class StockDataPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(stockCode),),
-      body: Padding(padding: const EdgeInsets.all(16), child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Card(child: Padding(
+        title: Text(stockCode),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Card(
+              child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: Text(
                   'Today Value: ${todayValue.toStringAsFixed(2)}',

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/model/predictions_short_data.dart';
@@ -323,7 +324,7 @@ class _StockPageState extends State<StockPage> {
                       yValueMapper: (StockData data, _) =>
                           data.predictedPrice ?? 0,
                       color: Colors.green.shade100,
-                      legendItemText: "Predicted Price",
+                      legendItemText: tr("stock.predictedPrice"),
                     ),
                   ],
                   primaryXAxis: DateTimeAxis(
@@ -354,7 +355,7 @@ class _StockPageState extends State<StockPage> {
                             .abs();
                       },
                       color: Colors.red.shade100,
-                      legendItemText: "Prediction difference",
+                      legendItemText: tr("stock.predictedDiff"),
                     ),
                     LineSeries<StockData, DateTime>(
                       dataSource: chartsTimes[chartTimesIndex],
@@ -367,7 +368,7 @@ class _StockPageState extends State<StockPage> {
                             .abs();
                       },
                       color: Colors.blue.shade100,
-                      legendItemText: "Prediction percentage",
+                      legendItemText: tr("stock.predictedPercent"),
                     ),
                   ],
                   primaryXAxis: DateTimeAxis(
@@ -422,7 +423,7 @@ class _StockPageState extends State<StockPage> {
                       xValueMapper: (StockData data, _) => data.date,
                       yValueMapper: (StockData data, _) => data.closingPrice,
                       color: Colors.red.shade200,
-                      legendItemText: "Predicted Price",
+                      legendItemText: tr("stock.predictedPrice"),
                     ),
                   ],
                   primaryXAxis: DateTimeAxis(
@@ -453,11 +454,11 @@ class _StockPageState extends State<StockPage> {
                             .abs();
                       },
                       color: Colors.red.shade100,
-                      legendItemText: "Prediction difference",
+                      legendItemText: tr("stock.predictedDiff"),
                     ),
                     LineSeries<StockData, DateTime>(
                       dataSource: chartData,
-                      name: "Prediction percentage",
+                      name: tr("stock.predictedPercent"),
                       xValueMapper: (StockData data, _) => data.date,
                       yValueMapper: (StockData data, _) {
                         return ((data.openingPrice - data.closingPrice) *
@@ -466,7 +467,7 @@ class _StockPageState extends State<StockPage> {
                             .abs();
                       },
                       color: Colors.blue.shade100,
-                      legendItemText: "Prediction percentage",
+                      legendItemText: tr("stock.predictedPercent"),
                     )
                   ],
                   primaryXAxis: DateTimeAxis(
@@ -497,8 +498,8 @@ class _StockPageState extends State<StockPage> {
           Expanded(
             child: TextField(
               controller: startDateController,
-              decoration: const InputDecoration(
-                labelText: 'Start Date',
+              decoration: InputDecoration(
+                labelText: tr("stock.startDate"),
               ),
               onTap: () async {
                 DateTime? pickedDate = await showDatePicker(
@@ -518,8 +519,8 @@ class _StockPageState extends State<StockPage> {
           Expanded(
             child: TextField(
               controller: endDateController,
-              decoration: const InputDecoration(
-                labelText: 'End Date',
+              decoration: InputDecoration(
+                labelText: tr("stock.endDate"),
               ),
               onTap: () async {
                 DateTime? pickedDate = await showDatePicker(
@@ -538,7 +539,7 @@ class _StockPageState extends State<StockPage> {
           ),
           const SizedBox(width: 10),
           ElevatedButton(
-            child: const Text('Submit'),
+            child: Text(tr("stock.submit")),
             onPressed: () {
               setState(() {
                 _chartData = PredictionsData.getStockDataDates(
@@ -602,7 +603,7 @@ class _StockPageState extends State<StockPage> {
             });
           },
           icon: Text(
-            "D",
+            tr("stock.day"),
             style: TextStyle(
               fontSize: 18,
               color: chartTimesIndex == 0 ? Colors.green : null,
@@ -616,7 +617,7 @@ class _StockPageState extends State<StockPage> {
               });
             },
             icon: Text(
-              "W",
+              tr("stock.week"),
               style: TextStyle(
                 fontSize: 18,
                 color: chartTimesIndex == 1 ? Colors.green : null,
@@ -629,7 +630,7 @@ class _StockPageState extends State<StockPage> {
               });
             },
             icon: Text(
-              "M",
+              tr("stock.month"),
               style: TextStyle(
                 fontSize: 18,
                 color: chartTimesIndex == 2 ? Colors.green : null,

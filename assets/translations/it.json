@@ -1,0 +1,32 @@
+{
+    "main": {
+        "search": "Cerca",
+        "notification": "Notifiche",
+        "home": "Home",
+        "profile": "Profilo",
+        "setting": "Impostazioni"
+    },
+    "setting": {
+        "lang": "lingua"
+    },
+    "predictions": {
+        "changeFromM": "Differenza dal mese scorso: {}%",
+        "noData": "Info non trovata",
+        "monthAvrgDiff": "Differenza media previsione mensile: {}%",
+        "predictedPrice": "Prezzo previsto: {}",
+        "absDiff": "Differenza assoluta: {}",
+        "percentDiff": "Differenza percentuale: {}%"
+    },
+    "stock": {
+        "day": "G",
+        "week": "S",
+        "month": "M",
+        "predictedPrice": "Prezzo previsto",
+        "predictedDiff": "Differenza di previsione",
+        "predictedPercent": "Percentuale di previsione",
+        "startDate": "Inizio",
+        "endDate": "Fine",
+        "submit": "Invio"
+    },
+    "gaugeRangeSentiment": "Visione generale di mercato"
+}

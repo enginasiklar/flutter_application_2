@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/charts/gauge_range.dart';
 import 'package:flutter_application_2/services/api_service.dart';
@@ -12,12 +13,12 @@ class GaugeRangePage extends StatelessWidget {
       body: Column(
         children: [
           const SizedBox(height: 20), // Add space at the top
-          const Card(
+          Card(
             child: Padding(
-              padding: EdgeInsets.all(15.0),
+              padding: const EdgeInsets.all(15.0),
               child: Text(
-                "General Market Sentiment",
-                style: TextStyle(
+                tr("gaugeRangeSentiment"),
+                style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),

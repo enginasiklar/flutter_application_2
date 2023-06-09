@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -6,17 +7,26 @@ import 'package:flutter_application_2/notifications/followed_stock_list_view.dar
 import 'package:flutter_application_2/pages/home_page.dart';
 import 'package:flutter_application_2/pages/login_page.dart';
 import 'package:flutter_application_2/pages/search/search_view.dart';
+import 'package:flutter_application_2/pages/setting_view.dart';
 import 'package:flutter_application_2/services/api_service.dart';
 import 'firebase_options.dart';
 import 'model/main_model.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await EasyLocalization.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   Map<String, MainModel> mainData = await ApiService().fetchMainData();
   MainModel.data = mainData; // Set the mainData using the static setter
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-  runApp(const MyApp());
+
+  runApp(
+    EasyLocalization(
+        supportedLocales: const [Locale('en'), Locale('it')],
+        path: 'assets/translations',
+        fallbackLocale: const Locale('en'),
+        child: const MyApp()),
+  );
 }
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -28,6 +38,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      locale: context.locale,
+      supportedLocales: context.supportedLocales,
+      localizationsDelegates: context.localizationDelegates,
       debugShowCheckedModeBanner: false,
       title: 'CashSpeeder',
       theme: ThemeData(
@@ -60,7 +73,7 @@ class _RootPageState extends State<RootPage> {
             title: Text(widget.title),
             actions: [
               IconButton(
-                tooltip: 'Search',
+                tooltip: tr('main.search'),
                 onPressed: () {
                   Navigator.of(context).push(MaterialPageRoute(
                     builder: (BuildContext context) {
@@ -70,9 +83,20 @@ class _RootPageState extends State<RootPage> {
                 },
                 icon: const Icon(Icons.search),
               ),
+              IconButton(
+                tooltip: tr('main.setting'),
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      return SettingViewPage();
+                    },
+                  ));
+                },
+                icon: const Icon(Icons.settings),
+              ),
               if (isLoggedIn)
                 IconButton(
-                  tooltip: 'Notifications',
+                  tooltip: tr('main.notifications'),
                   onPressed: () {
                     Navigator.of(context).push(MaterialPageRoute(
                       builder: (BuildContext context) {
@@ -87,16 +111,16 @@ class _RootPageState extends State<RootPage> {
           body: pages[currentPage],
           bottomNavigationBar: NavigationBar(
             labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
-            destinations: const [
+            destinations: [
               NavigationDestination(
-                icon: Icon(Icons.home),
-                label: 'home',
-                tooltip: 'home',
+                icon: const Icon(Icons.home),
+                label: tr('main.home'),
+                tooltip: tr('main.home'),
               ),
               NavigationDestination(
-                icon: Icon(Icons.person),
-                label: 'profile',
-                tooltip: 'profile',
+                icon: const Icon(Icons.person),
+                label: tr('main.profile'),
+                tooltip: tr('main.profile'),
               ),
             ],
             onDestinationSelected: (int index) {
