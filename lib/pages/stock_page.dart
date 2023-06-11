@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_2/model/predictions_short_data.dart';
 import 'package:flutter_application_2/pages/stock_data_page.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:intl/intl.dart';
 import '../model/stock_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -196,7 +195,7 @@ class _StockPageState extends State<StockPage> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               Container(
-                padding: EdgeInsets.all(10),
+                padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
@@ -204,7 +203,7 @@ class _StockPageState extends State<StockPage> {
                 child: buttonsDWM(),
               ),
               Container(
-                padding: EdgeInsets.all(10),
+                padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),

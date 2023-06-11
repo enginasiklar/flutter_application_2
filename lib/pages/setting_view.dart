@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
-//TODO: add italian
 class SettingViewPage extends StatelessWidget {
   SettingViewPage({super.key});
   final TextEditingController langController = TextEditingController();

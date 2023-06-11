@@ -34,7 +34,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key});
+  const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -52,7 +52,7 @@ class MyApp extends StatelessWidget {
 }
 
 class RootPage extends StatefulWidget {
-  const RootPage({Key? key, required this.title});
+  const RootPage({super.key, required this.title});
   final String title;
   @override
   State<RootPage> createState() => _RootPageState();
@@ -96,7 +96,7 @@ class _RootPageState extends State<RootPage> {
               ),
               if (isLoggedIn)
                 IconButton(
-                  tooltip: tr('main.notifications'),
+                  tooltip: tr('main.notification'),
                   onPressed: () {
                     Navigator.of(context).push(MaterialPageRoute(
                       builder: (BuildContext context) {

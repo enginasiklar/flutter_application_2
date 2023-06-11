@@ -1,9 +1,8 @@
-import 'package:flutter/cupertino.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../model/main_model.dart';
 
-//TODO: add italian
 class StockDataPage extends StatelessWidget {
   final String stockCode;
 
@@ -31,8 +30,9 @@ class StockDataPage extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: Text(
-                  'Today Value: ${todayValue.toStringAsFixed(2)}',
-                  style: TextStyle(fontSize: 16),
+                  tr("stockData.todayValue",
+                      args: [todayValue.toStringAsFixed(2)]),
+                  style: const TextStyle(fontSize: 16),
                 ),
               ),
             ),
@@ -41,8 +41,11 @@ class StockDataPage extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: Text(
-                  'Percentage Change (Today vs Yesterday): ${((todayValue - yesterdayValue) / yesterdayValue * 100).toStringAsFixed(2)}%',
-                  style: TextStyle(fontSize: 16),
+                  tr("stockData.percentDiffDay", args: [
+                    ((todayValue - yesterdayValue) / yesterdayValue * 100)
+                        .toStringAsFixed(2)
+                  ]),
+                  style: const TextStyle(fontSize: 16),
                 ),
               ),
             ),
@@ -51,8 +54,11 @@ class StockDataPage extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: Text(
-                  'Percentage Change (Last Month Prediction vs Last Month Value): ${((0 - lastMonthValue) / lastMonthValue * 100).toStringAsFixed(2)}%',
-                  style: TextStyle(fontSize: 16),
+                  tr("stockData.percentDiffMonth", args: [
+                    ((0 - lastMonthValue) / lastMonthValue * 100)
+                        .toStringAsFixed(2)
+                  ]),
+                  style: const TextStyle(fontSize: 16),
                 ),
               ),
             ),

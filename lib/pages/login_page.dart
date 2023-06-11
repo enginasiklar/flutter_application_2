@@ -1,9 +1,8 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_2/pages/profile_page.dart';
 import 'package:flutter_application_2/services/auth_service.dart';
 
-//TODO: add italian
 class LoginPage extends StatelessWidget {
   final AuthService _auth = AuthService();
   LoginPage({super.key});
@@ -24,7 +23,7 @@ class LoginPage extends StatelessWidget {
                       UserCredential? userCredential =
                           await _auth.signInWithGoogle();
                     },
-                    child: const Text('Login with Google'),
+                    child: Text(tr("login.loginGoogle")),
                   ),
                 ),
               ),
@@ -60,13 +59,13 @@ class ProfilePage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              'Welcome ${user.displayName}',
+              tr("login.welcome", args: [user.displayName ?? ""]),
               style: const TextStyle(fontSize: 24),
             ),
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () => _logout(context),
-              child: const Text('Logout'),
+              child: Text(tr("login.logout")),
             ),
           ],
         ),

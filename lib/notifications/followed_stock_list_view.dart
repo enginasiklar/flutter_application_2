@@ -1,15 +1,12 @@
-import 'dart:collection';
-import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import '../model/main_model.dart';
 import '../pages/stock_page.dart';
-import 'package:http/http.dart' as http;
 import '../services/api_service.dart';
 
-//TODO: add italian
 Future<void> deleteAllFavorites() async {
   final user = FirebaseAuth.instance.currentUser;
   final userID = user?.uid;
@@ -64,7 +61,7 @@ class _FollowedStocksListViewState extends State<FollowedStocksListView>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Notifications"),
+        title: Text(tr("followed.notification")),
         actions: [
           IconButton(
             onPressed: _handleTrashButton,
@@ -73,14 +70,14 @@ class _FollowedStocksListViewState extends State<FollowedStocksListView>
         ],
         bottom: TabBar(
           controller: _tabController,
-          tabs: const [
+          tabs: [
             Tab(
-              icon: Icon(Icons.notifications),
-              child: Text("Notifications"),
+              icon: const Icon(Icons.notifications),
+              child: Text(tr("followed.notification")),
             ),
             Tab(
-              icon: Icon(Icons.bar_chart_rounded),
-              child: Text("Favorites"),
+              icon: const Icon(Icons.bar_chart_rounded),
+              child: Text(tr("followed.favorites")),
             ),
           ],
         ),
@@ -285,9 +282,8 @@ void createNotification(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text("Notification Limit Exceeded"),
-          content: const Text(
-              "You have reached the maximum number of notifications."),
+          title: Text(tr("notificationMax.title")),
+          content: Text(tr("notificationMax.content")),
           actions: [
             TextButton(
               onPressed: () {
@@ -375,7 +371,8 @@ class _NotificationsPageState extends State<NotificationsPage> {
                 Padding(
                   padding: const EdgeInsets.all(10),
                   child: Text(
-                    "You have $remainingNotifications unique notifications left",
+                    tr("notification.leftNotificationes",
+                        args: [remainingNotifications.toString()]),
                     style: const TextStyle(
                       fontSize: 20,
                     ),

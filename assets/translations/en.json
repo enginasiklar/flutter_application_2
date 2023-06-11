@@ -28,5 +28,31 @@
         "endDate": "End Date",
         "submit": "Submit"
     },
-    "gaugeRangeSentiment": "General Market Sentiment"
+    "gaugeRangeSentiment": "General Market Sentiment",
+    "stockData": {
+        "todayValue": "Today Value: {}",
+        "percentDiffDay": "Percentage Change (Today vs Yesterday): {}%",
+        "percentDiffMonth": "Percentage Change (Last Month Prediction vs Last Month Value): {}%"
+    },
+    "profile": {
+        "welcome": "Welcome {}",
+        "logout": "Logout"
+    },
+    "followed": {
+        "notification": "Notifications",
+        "favorites": "Favorites"
+    },
+    "notificationMax": {
+        "title": "Notification Limit Exceeded",
+        "content": "You have reached the maximum number of notifications."
+    },
+    "notification": {
+        "leftNotificationes": "You have {} unique notifications left"
+    },
+    "login": {
+        "loginGoogle": "Login with Google",
+        "welcome": "Welcome {}",
+        "logout": "Logout"
+    },
+    "stockGrid":"Most Popular Stocks"
 }

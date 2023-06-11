@@ -1,7 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-//TODO: add italian
 class ProfilePage extends StatelessWidget {
   const ProfilePage({Key? key, required this.user}) : super(key: key);
 
@@ -22,13 +22,13 @@ class ProfilePage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              'Welcome ${user.displayName}',
+              tr("profile.welcome", args: [user.displayName ?? ""]),
               style: const TextStyle(fontSize: 24),
             ),
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () => _logout(context),
-              child: const Text('Logout'),
+              child: Text(tr("profile.logout")),
             ),
           ],
         ),

@@ -28,5 +28,30 @@
         "endDate": "Fine",
         "submit": "Invio"
     },
-    "gaugeRangeSentiment": "Visione generale di mercato"
+    "gaugeRangeSentiment": "Visione generale di mercato",
+    "stockData": {
+        "todayValue": "Valore di oggi: {}",
+        "percentDiffDay": "Differenza percentuale (Oggi vs Ieri): {}%",
+        "percentDiffMonth": "Differenza percentuale (Previsione del mese scorso vs Valore del mese scorso): {}%"
+    },
+    "profile": {
+        "welcome": "Benvenuto {}",
+        "logout": "Esci"
+    },
+    "followed":{
+        "notification": "Notifiche",
+        "favorites":"Preferite"
+    },
+    "notificationMax":{
+        "title":"Limite superato di notifiche"
+        ,"content":"Sei arrivato al limite massimo di notifiche."
+    },
+    "notification":{
+        "leftNotificationes":"Hai {} notifiche uniche rimaste"
+    },
+    "login": {
+        "loginGoogle": "Accedi con Google",
+        "welcome": "Benvenuto {}",
+        "logout": "Esci"
+    },"stockGrid":"Azioni più popolari"
 }
