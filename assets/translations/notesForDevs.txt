@@ -1,0 +1,7 @@
+Add a new language:
+    - create a file in assets/translations/{LangName}.json
+    - copy all the data in one of the other languages file and translate all of it
+    - in the function "main", add the new language to the list "supportedLocales: const [Locale('en'), Locale('it')]" as "Locale('{LangName}')"
+    - Done
+
+package used: https://pub.dev/packages/easy_localization
