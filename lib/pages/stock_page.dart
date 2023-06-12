@@ -256,27 +256,6 @@ class _StockPageState extends State<StockPage> {
                   legend: Legend(isVisible: true, position: LegendPosition.top),
                   zoomPanBehavior: zoomPanBehavior1,
                   trackballBehavior: _trackballBehavior1,
-                  /*onTooltipRender: (TooltipArgs args) {
-                    List<dynamic>? chartdata = args.dataPoints;
-                    StockData dataPoint = chartdata![args.pointIndex];
-              
-                    // Format date for the tooltip
-                    String formattedDate = DateFormat('d MMM yyyy').format(dataPoint.date);
-              
-                    // Calculate prediction difference and percentage
-                    double predictionDiff = (dataPoint.openingPrice.round() - dataPoint.closingPrice.round()).abs() as double;
-                    double predictionPercentage = ((dataPoint.openingPrice - dataPoint.closingPrice) * 100 / dataPoint.openingPrice).abs();
-              
-                    // Set the header to the formatted date
-                    args.header = formattedDate;
-              
-                    // Set the text to include prediction and actual value change and their percentages
-                    args.text = 'Prediction Diff: ${predictionDiff.toStringAsFixed(2)}\n'
-                        'Prediction Percentage: ${predictionPercentage.toStringAsFixed(2)}%\n'
-                        'Predicted Price: ${dataPoint.predictedPrice.toStringAsFixed(2)}\n'
-                        'Opening Price: ${dataPoint.openingPrice.toStringAsFixed(2)}\n'
-                        'Closing Price: ${dataPoint.closingPrice.toStringAsFixed(2)}';
-                  }, */
                   series: [
                     CandleSeries<StockData, DateTime>(
                       dataSource: chartsTimes[chartTimesIndex],
@@ -291,31 +270,6 @@ class _StockPageState extends State<StockPage> {
                       closeValueMapper: (StockData sales, _) =>
                           sales.closingPrice,
                     ),
-                    // LineSeries<StockData, DateTime>(
-                    //   dataSource: chartsTimes[chartTimesIndex],
-                    //   name: "Prediction difference",
-                    //   xValueMapper: (StockData data, _) => data.date,
-                    //   yValueMapper: (StockData data, _) {
-                    //     return (data.openingPrice.round() -
-                    //             data.closingPrice.round())
-                    //         .abs();
-                    //   },
-                    //   color: Colors.red.shade100,
-                    //   legendItemText: "Prediction difference",
-                    // ),
-                    // LineSeries<StockData, DateTime>(
-                    //   dataSource: chartsTimes[chartTimesIndex],
-                    //   name: "Prediction percentage",
-                    //   xValueMapper: (StockData data, _) => data.date,
-                    //   yValueMapper: (StockData data, _) {
-                    //     return ((data.openingPrice - data.closingPrice) *
-                    //             100 /
-                    //             data.openingPrice)
-                    //         .abs();
-                    //   },
-                    //   color: Colors.blue.shade100,
-                    //   legendItemText: "Prediction percentage",
-                    // ),
                     LineSeries<StockData, DateTime>(
                       dataSource: chartsTimes[chartTimesIndex],
                       name: "Predicted Price",
@@ -398,7 +352,13 @@ class _StockPageState extends State<StockPage> {
       future: _chartData,
       builder: (BuildContext context, AsyncSnapshot<List<StockData>> snapshot) {
         if (snapshot.hasData) {
-          final List<StockData> chartData = snapshot.data!;
+          List<StockData> chartData = snapshot.data!;
+
+          // Check if the last element has a value of 0 and remove it
+          if (chartData.isNotEmpty && chartData.last.closingPrice == 0) {
+            chartData.removeLast();
+          }
+
           return Column(
             children: [
               Expanded(
@@ -449,7 +409,7 @@ class _StockPageState extends State<StockPage> {
                       xValueMapper: (StockData data, _) => data.date,
                       yValueMapper: (StockData data, _) {
                         return (data.openingPrice.round() -
-                                data.closingPrice.round())
+                            data.closingPrice.round())
                             .abs();
                       },
                       color: Colors.red.shade100,
@@ -461,8 +421,8 @@ class _StockPageState extends State<StockPage> {
                       xValueMapper: (StockData data, _) => data.date,
                       yValueMapper: (StockData data, _) {
                         return ((data.openingPrice - data.closingPrice) *
-                                100 /
-                                data.openingPrice)
+                            100 /
+                            data.openingPrice)
                             .abs();
                       },
                       color: Colors.blue.shade100,
@@ -488,6 +448,7 @@ class _StockPageState extends State<StockPage> {
       },
     );
   }
+
 
   Widget datesSetBar() {
     return Container(
