@@ -1,10 +1,12 @@
+import 'dart:collection';
+import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import '../model/main_model.dart';
 import '../pages/stock_page.dart';
+import 'package:http/http.dart' as http;
 import '../services/api_service.dart';
 
 Future<void> deleteAllFavorites() async {
@@ -61,7 +63,7 @@ class _FollowedStocksListViewState extends State<FollowedStocksListView>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(tr("followed.notification")),
+        title: const Text("Notifications"),
         actions: [
           IconButton(
             onPressed: _handleTrashButton,
@@ -70,14 +72,14 @@ class _FollowedStocksListViewState extends State<FollowedStocksListView>
         ],
         bottom: TabBar(
           controller: _tabController,
-          tabs: [
+          tabs: const [
             Tab(
-              icon: const Icon(Icons.notifications),
-              child: Text(tr("followed.notification")),
+              icon: Icon(Icons.notifications),
+              child: Text("Notifications"),
             ),
             Tab(
-              icon: const Icon(Icons.bar_chart_rounded),
-              child: Text(tr("followed.favorites")),
+              icon: Icon(Icons.bar_chart_rounded),
+              child: Text("Favorites"),
             ),
           ],
         ),
@@ -151,6 +153,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
               itemCount: favoriteStocks?.length,
               itemBuilder: (context, index) {
                 final favoriteStock = favoriteStocks![index];
+                String buyOrSell = getBuyOrSellRecommendation(favoriteStock);
                 return ListTile(
                   leading: (favoriteStock.todayValue -
                               favoriteStock.yesterdayValue) >
@@ -158,7 +161,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                       ? Image.asset("assets/images/arrow_up.png", height: 20)
                       : Image.asset("assets/images/arrow_down.png", height: 20),
                   title: Text(favoriteStock.name),
-                  subtitle: Text(favoriteStock.name),
+                  subtitle: Text('$buyOrSell Recommendation'),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -182,12 +185,13 @@ class _FavoritesPageState extends State<FavoritesPage> {
                     ],
                   ),
                   onTap: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                      builder: (BuildContext context) => StockPage(
-                        stockCode: favoriteStock.name,
-                        stockName: favoriteStock.name,
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (BuildContext context) => StockPage(
+                            stockCode: favoriteStock.name,
+                            stockName: favoriteStock.name),
                       ),
-                    ));
+                    );
                   },
                 );
               },
@@ -198,6 +202,36 @@ class _FavoritesPageState extends State<FavoritesPage> {
     );
   }
 }
+
+String getBuyOrSellRecommendation(MainModel stock) {
+  double todayPerformance = stock.todayValue - stock.yesterdayValue;
+  double weekPerformance = stock.todayValue - stock.lastWeekValue;
+  double monthPerformance = stock.todayValue - stock.lastMonthValue;
+
+  // Define the weight values for each performance factor
+  const double todayWeight = 1.0;
+  const double weekWeight = 0.5;
+  const double monthWeight = 0.3;
+
+  // Calculate the weighted sum of performances
+  double weightedSum = todayPerformance * todayWeight +
+      weekPerformance * weekWeight +
+      monthPerformance * monthWeight;
+
+  // Calculate thresholds as a percentage of the current price
+  double sellThreshold = stock.todayValue * -0.02; // 2% decrease from the current price
+  double buyThreshold = stock.todayValue * 0.02; // 2% increase from the current price
+
+  if (weightedSum > buyThreshold) {
+    return 'Buy';
+  } else if (weightedSum < sellThreshold) {
+    return 'Sell';
+  } else {
+    return 'Hold';
+  }
+}
+
+
 
 class ClockPopupPage extends StatefulWidget {
   final String stockName;
@@ -265,8 +299,7 @@ class _ClockPopupPageState extends State<ClockPopupPage> {
   }
 }
 
-void createNotification(
-    BuildContext context, String selectedButton, String stockName) async {
+void createNotification(BuildContext context, String selectedButton, String stockName) async {
   final db = FirebaseFirestore.instance;
   final userID = FirebaseAuth.instance.currentUser?.uid;
   FirebaseMessaging messaging = FirebaseMessaging.instance;
@@ -282,8 +315,9 @@ void createNotification(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(tr("notificationMax.title")),
-          content: Text(tr("notificationMax.content")),
+          title: const Text("Notification Limit Exceeded"),
+          content: const Text(
+              "You have reached the maximum number of notifications."),
           actions: [
             TextButton(
               onPressed: () {
@@ -297,8 +331,14 @@ void createNotification(
     );
     return;
   }
-  ApiService.sendUserData(userID, fcmToken);
-  ApiService.sendNotificationData(userID, selectedButton, stockName);
+  final notificationData = {
+    "userID": userID,
+    "percentage": selectedButton,
+    "tickerID": stockName,
+  };
+  await db.collection("notifications").add(notificationData);
+  //ApiService.sendUserData(userID, fcmToken);
+  //ApiService.sendNotificationData(userID, selectedButton, stockName);
   Navigator.of(context).pop();
 }
 
@@ -313,7 +353,7 @@ Future<void> deleteNotification(String stockCode) async {
       .get();
   if (snapshot.docs.isNotEmpty) {
     final percentage = snapshot.docs.first['percentage'];
-    await ApiService.deleteNotification(userID, stockCode, percentage);
+    //await ApiService.deleteNotification(userID, stockCode, percentage);
     for (final doc in snapshot.docs) {
       await doc.reference.delete();
     }
@@ -371,8 +411,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
                 Padding(
                   padding: const EdgeInsets.all(10),
                   child: Text(
-                    tr("notification.leftNotificationes",
-                        args: [remainingNotifications.toString()]),
+                    "You have $remainingNotifications unique notifications left",
                     style: const TextStyle(
                       fontSize: 20,
                     ),
