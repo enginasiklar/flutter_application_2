@@ -41,7 +41,6 @@ class _StockPageState extends State<StockPage> {
     tooltipDisplayMode: TrackballDisplayMode.groupAllPoints,
     shouldAlwaysShow: true,
   );
-  late TooltipBehavior _tooltipBehavior;
   late DateTime _startDate;
   late DateTime _endDate;
   TextEditingController startDateController = TextEditingController();
@@ -67,9 +66,6 @@ class _StockPageState extends State<StockPage> {
   @override
   void initState() {
     super.initState();
-    _tooltipBehavior = TooltipBehavior(
-      enable: true,
-    );
     _chartData = PredictionsData.getStockData(widget.stockCode);
   }
 
