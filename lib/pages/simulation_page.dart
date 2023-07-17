@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import '../model/main_model.dart';
 class SimulationInputPage extends StatefulWidget {
   @override
   _SimulationInputPageState createState() => _SimulationInputPageState();
