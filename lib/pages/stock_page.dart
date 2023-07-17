@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/model/predictions_short_data.dart';
+import 'package:flutter_application_2/pages/simulation_page.dart';
 import 'package:flutter_application_2/pages/stock_data_page.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import '../model/stock_model.dart';
@@ -40,7 +41,6 @@ class _StockPageState extends State<StockPage> {
     tooltipDisplayMode: TrackballDisplayMode.groupAllPoints,
     shouldAlwaysShow: true,
   );
-  late TooltipBehavior _tooltipBehavior;
   late DateTime _startDate;
   late DateTime _endDate;
   TextEditingController startDateController = TextEditingController();
@@ -66,9 +66,6 @@ class _StockPageState extends State<StockPage> {
   @override
   void initState() {
     super.initState();
-    _tooltipBehavior = TooltipBehavior(
-      enable: true,
-    );
     _chartData = PredictionsData.getStockData(widget.stockCode);
   }
 
@@ -106,6 +103,19 @@ class _StockPageState extends State<StockPage> {
       appBar: AppBar(
         title: Text(widget.stockName),
         actions: [
+          IconButton(
+            onPressed: () {
+              // Navigate to the simulation input page when the button is pressed
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (BuildContext context) => SimulationInputPage(),
+                ),
+              );
+            },
+            tooltip: 'Simulation',
+            icon: const Icon(Icons.calculate),
+          ),
           IconButton(
             onPressed: () {
               Navigator.of(context).push(
