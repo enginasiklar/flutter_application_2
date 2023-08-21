@@ -3,7 +3,8 @@ class ApiConstants {
   static String usersEndpoint = '/flutterdemo';
   static String gaugeUrl = 'https://api.alternative.me/fng/';
   static String lineChartUrl = 'http://demo8642462.mockable.io/';
-  static String candleUrl = 'https://2f80-160-75-160-231.ngrok-free.app/finance';
-  static String mainUrl = 'https://2f80-160-75-160-231.ngrok-free.app/';
+  static String candleUrl =
+      'https://e1c8-160-75-160-199.ngrok-free.app/finance';
+  static String mainUrl = 'https://e1c8-160-75-160-199.ngrok-free.app/';
   static String authorization = "uysm:pecnet";
 }
